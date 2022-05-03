@@ -1,2 +1,3 @@
-# cs340_project
-Group 39 CS 340 Project - Spring 22
+# OSU CS 340 Final Project
+### Group 39
+### Clifford Bielinski and Yujun Liu
