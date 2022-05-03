@@ -1,10 +1,12 @@
 from flask import Flask, render_template
 import os
 from dotenv import load_dotenv
+import tests.sample_data
 
 # Configuration
-load_dotenv()
+load_dotenv()  # loads environmental variables from .env
 app = Flask(__name__)
+
 
 # Routes
 @app.route('/')
@@ -13,8 +15,7 @@ def index():
 
 @app.route('/species')
 def species():
-  return render_template('species.j2')
-
+  return render_template('species.j2', all_species=tests.sample_data.species)
 
 # Listener
 if __name__ == '__main__':

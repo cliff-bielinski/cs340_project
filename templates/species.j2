@@ -1,5 +1,27 @@
 {% extends 'base.j2' %}
 
 {% block content %}
-  <h2>Add New Species</h2>
+  <h2>Current Pokemon Species</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Pokedex #</th>
+        <th scope="col">Species</th>
+        <th scope="col">Type</th>
+        <th scope="col">Secondary Type</th>
+        <th scope="col">Update</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for species in all_species %}
+      <tr>
+        <th scope="row">{{ species['pokedex_id'] }}</th>
+        <td>{{ species['species'] }}</td>
+        <td>{{ species['type'] }}</td>
+        <td>{{ species['secondary_type'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
