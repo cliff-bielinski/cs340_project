@@ -1,13 +1,25 @@
 from flask import Flask, render_template
+from flask_navigation import Navigation
 import os
 
 # Configuration
 app = Flask(__name__)
+nav = Navigation(app)
+
+# Navigation
+nav.Bar('top', [
+  nav.Item('Home', 'index'),
+  nav.Item('Add Species', 'species')
+])
 
 # Routes
 @app.route('/')
-def root():
-  return render_template('main.j2')
+def index():
+  return render_template('index.j2')
+
+@app.route('/species')
+def species():
+  return render_template('species.j2')
 
 # Listener
 if __name__ == '__main__':
