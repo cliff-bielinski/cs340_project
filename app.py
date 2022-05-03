@@ -17,6 +17,10 @@ def index():
 def species():
   return render_template('species.j2', all_species=tests.sample_data.species)
 
+@app.route('/pokemon')
+def pokemon():
+  return render_template('pokemon.j2', all_pokemon=tests.sample_data.pokemon)
+
 # Listener
 if __name__ == '__main__':
   port = os.getenv("PORT")  # set port in .env file as PORT=xxxxx

@@ -30,3 +30,54 @@ species = [
     "secondary_type": None
   }
 ]
+
+pokemon = [
+  {
+    "pokemon_id": 1,
+    "nickname": "Zaps",
+    "gender": "Male",
+    "level": 15,
+    "species": "Pikachu",
+    "trainer": "Ash Ketchum"
+  },
+  {
+    "pokemon_id": 2,
+    "nickname": None,
+    "gender": "Feale",
+    "level": 17,
+    "species": "Pikachu",
+    "trainer": "Gary Oak"
+  },
+  {
+    "pokemon_id": 3,
+    "nickname": "Bulba",
+    "gender": "Female",
+    "level": 5,
+    "species": "Bulbasaur",
+    "trainer": "Misty Williams"
+  },
+  {
+    "pokemon_id": 4,
+    "nickname": "Beaks",
+    "gender": None,
+    "level": 22,
+    "species": "Pidgey",
+    "trainer": "Brock Harrison"
+  },
+  {
+    "pokemon_id": 5,
+    "nickname": None,
+    "gender": "Male",
+    "level": 30,
+    "species": "Jigglypuff",
+    "trainer": None
+  },
+  {
+    "pokemon_id": 6,
+    "nickname": None,
+    "gender": None,
+    "level": 100,
+    "species": "Mewtwo",
+    "trainer": "Ash Ketchum"
+  },
+]
