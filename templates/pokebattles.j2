@@ -1,0 +1,35 @@
+{% extends 'base.j2' %}
+
+{% block content %}
+  <h2>Pokemon Battle Participation</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Pokebattle #</th>
+        <th scope="col">Date</th>
+        <th scope="col">Stadium</th>
+        <th scope="col">Nickname</th>
+        <th scope="col">Species</th>
+        <th scope="col">Trainer</th>
+        <th scope="col">Winner</th>
+        <th scope="col">Knocked Out?</th>
+        <th scope="col">Update</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pokebattle in pokebattles %}
+      <tr>
+        <th scope="row">{{ pokebattle['pokebattle_id'] }}</th>
+        <td>{{ pokebattle['date'] }}</td>
+        <td>{{ pokebattle['stadium'] }}</td>
+        <td>{{ pokebattle['nickname'] }}</td>
+        <td>{{ pokebattle['species'] }}</td>
+        <td>{{ pokebattle['trainer'] }}</td>
+        <td>{{ pokebattle['winner'] }}</td>
+        <td>{{ pokebattle['knocked_out'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

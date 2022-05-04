@@ -17,6 +17,10 @@ def index():
 def pokemon():
   return render_template('pokemon.j2', all_pokemon=tests.sample_data.pokemon)
 
+@app.route('/pokebattles')
+def pokebattles():
+  return render_template('pokebattles.j2', pokebattles=tests.sample_data.pokemon_battles)
+
 @app.route('/trainers')
 def trainers():
   return render_template('trainers.j2', trainers=tests.sample_data.trainers)
