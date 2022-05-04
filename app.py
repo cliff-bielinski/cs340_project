@@ -33,6 +33,10 @@ def battles():
 def species():
   return render_template('species.j2', all_species=tests.sample_data.species)
 
+@app.route('/addspecies')
+def addspecies():
+  return render_template('forms/addspecies.j2', types=tests.sample_data.types)
+
 @app.route('/stadiums')
 def stadiums():
   return render_template('stadiums.j2', stadiums=tests.sample_data.stadiums)
