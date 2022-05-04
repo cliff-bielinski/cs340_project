@@ -13,6 +13,7 @@
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="{{ url_for('pokemon') }}">Current Pokemon</a></li>
             <li><a class="dropdown-item" href="#">Add Pokemon</a></li>
+            <li><a class="dropdown-item" href="#">Battle Participation</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -20,7 +21,7 @@
             Trainers
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Current Trainers</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('trainers') }}">Current Trainers</a></li>
             <li><a class="dropdown-item" href="#">Add Trainer</a></li>
           </ul>
         </li>
@@ -29,7 +30,7 @@
             Battles
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Current Battles</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('battles') }}">Current Battles</a></li>
             <li><a class="dropdown-item" href="#">Add Battle</a></li>
           </ul>
         </li>
@@ -47,7 +48,7 @@
             Stadiums
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Current Stadiums</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('stadiums') }}">Current Stadiums</a></li>
             <li><a class="dropdown-item" href="#">Add Stadium</a></li>
           </ul>
         </li>

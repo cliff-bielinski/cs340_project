@@ -13,13 +13,25 @@ app = Flask(__name__)
 def index():
   return render_template('index.j2')
 
+@app.route('/pokemon')
+def pokemon():
+  return render_template('pokemon.j2', all_pokemon=tests.sample_data.pokemon)
+
+@app.route('/trainers')
+def trainers():
+  return render_template('trainers.j2', trainers=tests.sample_data.trainers)
+
+@app.route('/battles')
+def battles():
+  return render_template('battles.j2', battles=tests.sample_data.battles)
+
 @app.route('/species')
 def species():
   return render_template('species.j2', all_species=tests.sample_data.species)
 
-@app.route('/pokemon')
-def pokemon():
-  return render_template('pokemon.j2', all_pokemon=tests.sample_data.pokemon)
+@app.route('/stadiums')
+def stadiums():
+  return render_template('stadiums.j2', stadiums=tests.sample_data.stadiums)
 
 # Listener
 if __name__ == '__main__':

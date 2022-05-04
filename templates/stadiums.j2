@@ -1,0 +1,25 @@
+{% extends 'base.j2' %}
+
+{% block content %}
+  <h2>Current Stadiums</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Stadium #</th>
+        <th scope="col">Stadium Name</th>
+        <th scope="col">Location</th>
+        <th scope="col">Update</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stadium in stadiums %}
+      <tr>
+        <th scope="row">{{ stadium['stadium_id'] }}</th>
+        <td>{{ stadium['name'] }}</td>
+        <td>{{ stadium['location'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

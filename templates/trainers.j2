@@ -1,0 +1,27 @@
+{% extends 'base.j2' %}
+
+{% block content %}
+  <h2>Current Trainers</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Trainer #</th>
+        <th scope="col">Name</th>
+        <th scope="col">Birthdate</th>
+        <th scope="col">Gender</th>
+        <th scope="col">Update</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for trainer in trainers %}
+      <tr>
+        <th scope="row">{{ trainer['trainer_id'] }}</th>
+        <td>{{ trainer['name'] }}</td>
+        <td>{{ trainer['birthdate'] }}</td>
+        <td>{{ trainer['gender'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

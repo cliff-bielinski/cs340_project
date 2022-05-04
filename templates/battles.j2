@@ -1,0 +1,29 @@
+{% extends 'base.j2' %}
+
+{% block content %}
+  <h2>Current Battles</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Battle #</th>
+        <th scope="col">Date</th>
+        <th scope="col">Location</th>
+        <th scope="col">Winner</th>
+        <th scope="col">Loser</th>
+        <th scope="col">Update</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for battle in battles %}
+      <tr>
+        <th scope="row">{{ battle['battle_id'] }}</th>
+        <td>{{ battle['date'] }}</td>
+        <td>{{ battle['location'] }}</td>
+        <td>{{ battle['winner'] }}</td>
+        <td>{{ battle['loser'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
