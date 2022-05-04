@@ -2,7 +2,7 @@
 
 {% block content %}
   <h2>Pokemon Battle Participation</h2>
-  <table class="table">
+  <table class="table table-dark table-hover">
     <thead>
       <tr>
         <th scope="col">Pokebattle #</th>
@@ -28,6 +28,16 @@
         <td>{{ pokebattle['trainer'] }}</td>
         <td>{{ pokebattle['winner'] }}</td>
         <td>{{ pokebattle['knocked_out'] }}</td>
+        <td>
+          <a class="navbar-brand" href="#">
+            <img src="/static/img/pokeball.png" alt="update" width="40" height="40">
+          </a>
+        </td>
+        <td>
+          <a class="navbar-brand" href="#">
+            <img src="/static/img/open_pokeball.png" alt="delete" width="40" height="40">
+          </a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

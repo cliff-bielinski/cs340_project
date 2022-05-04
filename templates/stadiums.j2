@@ -2,7 +2,7 @@
 
 {% block content %}
   <h2>Current Stadiums</h2>
-  <table class="table">
+  <table class="table table-dark table-hover">
     <thead>
       <tr>
         <th scope="col">Stadium #</th>
@@ -18,6 +18,16 @@
         <th scope="row">{{ stadium['stadium_id'] }}</th>
         <td>{{ stadium['name'] }}</td>
         <td>{{ stadium['location'] }}</td>
+        <td>
+          <a class="navbar-brand" href="#">
+            <img src="/static/img/pokeball.png" alt="update" width="40" height="40">
+          </a>
+        </td>
+        <td>
+          <a class="navbar-brand" href="#">
+            <img src="/static/img/open_pokeball.png" alt="delete" width="40" height="40">
+          </a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

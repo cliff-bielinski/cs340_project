@@ -2,7 +2,7 @@
 
 {% block content %}
   <h2>Current Trainers</h2>
-  <table class="table">
+  <table class="table table-dark table-hover">
     <thead>
       <tr>
         <th scope="col">Trainer #</th>
@@ -20,6 +20,16 @@
         <td>{{ trainer['name'] }}</td>
         <td>{{ trainer['birthdate'] }}</td>
         <td>{{ trainer['gender'] }}</td>
+        <td>
+          <a class="navbar-brand" href="#">
+            <img src="/static/img/pokeball.png" alt="update" width="40" height="40">
+          </a>
+        </td>
+        <td>
+          <a class="navbar-brand" href="#">
+            <img src="/static/img/open_pokeball.png" alt="delete" width="40" height="40">
+          </a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
