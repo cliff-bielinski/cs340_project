@@ -45,6 +45,13 @@ def updatespecies():
 def stadiums():
   return render_template('stadiums.j2', stadiums=tests.sample_data.stadiums)
 
+@app.route('/addstadium')
+def addstadium():
+  return render_template('forms/addstadium.j2')
+
+@app.route('/updatestadium')
+def updatestadium():
+  return render_template('forms/updatestadium.j2')
 
 # Listener
 if __name__ == '__main__':
