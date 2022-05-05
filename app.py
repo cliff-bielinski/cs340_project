@@ -37,6 +37,14 @@ def updatepokemon():
 def pokebattles():
   return render_template('pokebattles.j2', pokebattles=tests.sample_data.pokemon_battles)
 
+@app.route('/addpokebattle')
+def addpokebattle():
+  return render_template('forms/addpokebattle.j2')
+
+@app.route('/updatepokebattle')
+def updatepokebattle():
+  return render_template('forms/updatepokebattle.j2')
+
 @app.route('/trainers')
 def trainers():
   return render_template('trainers.j2', trainers=tests.sample_data.trainers)

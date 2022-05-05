@@ -29,7 +29,7 @@
         <td>{{ pokebattle['winner'] }}</td>
         <td>{{ pokebattle['knocked_out'] }}</td>
         <td>
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="{{ url_for('updatepokebattle') }}">
             <img src="/static/img/pokeball.png" alt="update" width="40" height="40">
           </a>
         </td>
