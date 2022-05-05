@@ -1,0 +1,36 @@
+{% extends 'base.j2' %}
+
+{% block content %}
+  <h2>Add New Battle</h2>
+  <form>
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input type="date" class="form-control" id="date">
+    </div>
+    <div class="form-group">
+      <label for="location">Stadium</label>
+      <select id="location" class="form-select">
+        {% for location in locations %}
+          <option value="{{location.name}}">{{ location.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="winner">Winner</label>
+      <select id="winner" class="form-select">
+        {% for trainer in trainers %}
+          <option value="{{trainer.name}}">{{ trainer.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="loser">Loser</label>
+      <select id="location" class="form-select">
+        {% for trainer in trainers %}
+          <option value="{{trainer.name}}">{{ trainer.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Battle</button>
+  </form>
+{% endblock %}

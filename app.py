@@ -29,6 +29,22 @@ def trainers():
 def battles():
   return render_template('battles.j2', battles=tests.sample_data.battles)
 
+@app.route('/addbattle')
+def addbattle():
+  return render_template(
+    'forms/addbattle.j2', 
+    locations=tests.sample_data.stadiums,
+    trainers=tests.sample_data.trainers
+  )
+
+@app.route('/updatebattle')
+def updatebattle():
+  return render_template(
+    'forms/updatebattle.j2', 
+    locations=tests.sample_data.stadiums,
+    trainers=tests.sample_data.trainers
+  )
+
 @app.route('/species')
 def species():
   return render_template('species.j2', all_species=tests.sample_data.species)
