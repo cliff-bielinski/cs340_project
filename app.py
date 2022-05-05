@@ -37,6 +37,10 @@ def species():
 def addspecies():
   return render_template('forms/addspecies.j2', types=tests.sample_data.types)
 
+@app.route('/updatespecies')
+def updatespecies():
+  return render_template('forms/updatespecies.j2')
+
 @app.route('/stadiums')
 def stadiums():
   return render_template('stadiums.j2', stadiums=tests.sample_data.stadiums)
