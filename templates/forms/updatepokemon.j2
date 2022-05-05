@@ -1,0 +1,58 @@
+{% extends 'base.j2' %}
+
+{% block content %}
+  <h2>Update Pokemon</h2>
+  <form>
+    <div class="form-group">
+      <label for="nickname">Nickname</label>
+      <input type="text" class="form-control" id="nickname">
+    </div>
+    <div class="form-group">
+      <label for="species">Species</label>
+      <select id="species" class="form-select">
+        {% for species in all_species %}
+          <option value="{{species.species}}">{{ species.species }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="trainer">Trainer</label>
+      <select id="trainer" class="form-select">
+        <option value="None">None</option>
+        {% for trainer in trainers %}
+          <option value="{{trainer.name}}">{{ trainer.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="level" class="form-label">Level</label>
+      <input type="number" class="form-control" id="level">
+    </div>
+    <fieldset class="form-group">
+      <div class="row">
+        <legend class="col-form-label col-sm-2 pt-0">Gender</legend>
+        <div class="col-sm-10">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="gender" id="male" value="Male" checked>
+            <label class="form-check-label" for="gridRadios1">
+              Male
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="gender" id="female" value="Female">
+            <label class="form-check-label" for="gridRadios2">
+              Female
+            </label>
+          </div>
+          <div class="form-check disabled">
+            <input class="form-check-input" type="radio" name="gender" id="none" value="None">
+            <label class="form-check-label" for="gridRadios3">
+              None
+            </label>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <button type="submit" class="btn btn-primary">Update Pokemon</button>
+  </form>
+{% endblock %}
