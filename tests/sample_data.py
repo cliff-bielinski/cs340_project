@@ -43,7 +43,7 @@ pokemon = [
   {
     "pokemon_id": 2,
     "nickname": None,
-    "gender": "Feale",
+    "gender": "Female",
     "level": 17,
     "species": "Pikachu",
     "trainer": "Gary Oak"

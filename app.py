@@ -15,7 +15,12 @@ def index():
 
 @app.route('/pokemon')
 def pokemon():
-  return render_template('pokemon.j2', all_pokemon=tests.sample_data.pokemon)
+  return render_template(
+    'pokemon.j2',
+    all_pokemon=tests.sample_data.pokemon,
+    all_species=tests.sample_data.species,
+    trainers=tests.sample_data.trainers
+    )
 
 @app.route('/addpokemon')
 def addpokemon():

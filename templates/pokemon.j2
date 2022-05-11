@@ -36,7 +36,7 @@
           </a>
         </td>
         <td>
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="#" onclick="alert('Are you sure you want to delete?');">
             <img src="/static/img/open_pokeball.png" alt="delete" width="40" height="40">
           </a>
         </td>
@@ -44,4 +44,33 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <br>
+  <h5>Search for a Pokemon</h5>
+  <form action="#" method="get">
+    <div class="search-form">
+      <label for="nickname">Nickname (optional)</label>
+      <input type="text" class="form-control" id="nickname">
+
+      <label for="species">Species</label>
+      <select id="species" class="form-select">
+        {% for species in all_species %}
+          <option value="{{species.species}}">{{ species.species }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="trainer">Trainer (optional)</label>
+      <select id="trainer" class="form-select">
+        <option value="None"></option>
+        {% for trainer in trainers %}
+          <option value="{{trainer.name}}">{{ trainer.name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="level" class="form-label">Level (optional)</label>
+      <input type="number" class="form-control" id="level">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+
 {% endblock %}
