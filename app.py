@@ -1,17 +1,25 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, json
 import os
 from dotenv import load_dotenv
 import tests.sample_data
+import database.db_connector as db
 
 # Configuration
 load_dotenv()  # loads environmental variables from .env
 app = Flask(__name__)
-
+db_connection = db.connect_to_database()
 
 # Routes
 @app.route('/')
 def index():
   return render_template('index.j2')
+
+@app.route('/test')
+def test():
+  query = "SELECT * FROM Stadiums;"
+  cursor = db.execute_query(db_connection=db_connection, query=query)
+  results = json.dumps(cursor.fetchall())
+  return results
 
 @app.route('/pokemon')
 def pokemon():
