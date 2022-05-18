@@ -156,7 +156,6 @@ def updatestadium():
 
 # Listener
 if __name__ == '__main__':
-  # port = os.getenv("PORT")  # set port in .env file as PORT=xxxxx
+  port = os.getenv("PORT")  # set port in .env file as PORT=xxxxx
 
-  # app.run(port=port, debug=True)
-  app.run(host='0.0.0.0', port=33333)
+  app.run(port=port, debug=True)
