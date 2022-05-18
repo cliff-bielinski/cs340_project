@@ -3,11 +3,20 @@ import os
 from dotenv import load_dotenv
 import tests.sample_data
 import database.db_connector as db
+from flask_mysqldb import MySQL
 
 # Configuration
 load_dotenv()  # loads environmental variables from .env
 app = Flask(__name__)
-db_connection = db.connect_to_database()
+# db_connection = db.connect_to_database() # YUJUN this line breaks
+
+# YUJUN
+app.config["MYSQL_HOST"] = "classmysql.engr.oregonstate.edu"
+app.config["MYSQL_USER"] = "cs340_liuyuju"
+app.config["MYSQL_PASSWORD"] = "3754"
+app.config["MYSQL_DB"] = "cs340_liuyuju"
+app.config["MYSQL_CURSORCLASS"] = "DictCursor"
+mysql = MySQL(app)
 
 # Routes
 @app.route('/')
@@ -23,11 +32,42 @@ def test():
 
 @app.route('/pokemon')
 def pokemon():
+  query = "SELECT * FROM Pokemons;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_pokemons = cur.fetchall()
+
+  query = "SELECT * FROM Species;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_species = cur.fetchall()
+  
+  query = "SELECT * FROM Trainers;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_trainers = cur.fetchall()
+
+  data_pokemons = []
+  for pokemon in db_pokemons:
+    cur_pokemon = pokemon
+    cur_species = ''
+    for species in db_species:
+      if species['pokedex_id'] == cur_pokemon['pokedex_id']:
+          cur_species = species['species']
+
+    cur_trainer = ''
+    for trainer in db_trainers:
+      if trainer['trainer_id'] == cur_pokemon['trainer_id']:
+          cur_trainer = trainer['name']
+    cur_pokemon['species'] = cur_species
+    cur_pokemon['trainer'] = cur_trainer
+    data_pokemons.append(cur_pokemon)
+
   return render_template(
     'pokemon.j2',
-    all_pokemon=tests.sample_data.pokemon,
-    all_species=tests.sample_data.species,
-    trainers=tests.sample_data.trainers
+    all_pokemon=data_pokemons,
+    all_species=db_species,
+    trainers=db_trainers
     )
 
 @app.route('/addpokemon')
@@ -116,6 +156,7 @@ def updatestadium():
 
 # Listener
 if __name__ == '__main__':
-  port = os.getenv("PORT")  # set port in .env file as PORT=xxxxx
+  # port = os.getenv("PORT")  # set port in .env file as PORT=xxxxx
 
-  app.run(port=port, debug=True)
+  # app.run(port=port, debug=True)
+  app.run(host='0.0.0.0', port=33333)
