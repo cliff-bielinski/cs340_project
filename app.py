@@ -2,19 +2,16 @@ from flask import Flask, render_template, json, request, redirect
 import os
 from dotenv import load_dotenv
 import tests.sample_data
-import database.db_connector as db
 from flask_mysqldb import MySQL
 
 # Configuration
 load_dotenv()  # loads environmental variables from .env
 app = Flask(__name__)
-# db_connection = db.connect_to_database() # YUJUN this line breaks
 
-# YUJUN
-app.config["MYSQL_HOST"] = "classmysql.engr.oregonstate.edu"
-app.config["MYSQL_USER"] = "cs340_liuyuju"
-app.config["MYSQL_PASSWORD"] = "3754"
-app.config["MYSQL_DB"] = "cs340_liuyuju"
+app.config["MYSQL_HOST"] = os.getenv("host")
+app.config["MYSQL_USER"] = os.getenv("user")
+app.config["MYSQL_PASSWORD"] = os.getenv("passwd")
+app.config["MYSQL_DB"] = os.getenv("db")
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 mysql = MySQL(app)
 
@@ -23,51 +20,48 @@ mysql = MySQL(app)
 def index():
   return render_template('index.j2')
 
-@app.route('/test')
-def test():
-  query = "SELECT * FROM Stadiums;"
-  cursor = db.execute_query(db_connection=db_connection, query=query)
-  results = json.dumps(cursor.fetchall())
-  return results
-
 @app.route('/pokemon')
 def pokemon():
-  query = "SELECT * FROM Pokemons;"
+  query = """
+    SELECT `pokemon_id`, `nickname`, Pokemons.gender, `level`, Species.species, Trainers.name AS trainer
+    FROM `Pokemons` 
+    INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
+    LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
+    ORDER BY `pokemon_id`;
+  """
   cur = mysql.connection.cursor()
   cur.execute(query)
   db_pokemons = cur.fetchall()
 
-  query = "SELECT * FROM Species;"
-  cur = mysql.connection.cursor()
-  cur.execute(query)
-  db_species = cur.fetchall()
+  # query = "SELECT * FROM Species;"
+  # cur = mysql.connection.cursor()
+  # cur.execute(query)
+  # db_species = cur.fetchall()
   
-  query = "SELECT * FROM Trainers;"
-  cur = mysql.connection.cursor()
-  cur.execute(query)
-  db_trainers = cur.fetchall()
+  # query = "SELECT * FROM Trainers;"
+  # cur = mysql.connection.cursor()
+  # cur.execute(query)
+  # db_trainers = cur.fetchall()
 
-  data_pokemons = []
-  for pokemon in db_pokemons:
-    cur_pokemon = pokemon
-    cur_species = None
-    for species in db_species:
-      if species['pokedex_id'] == cur_pokemon['pokedex_id']:
-          cur_species = species['species']
+  # data_pokemons = []
+  # for pokemon in db_pokemons:
+  #   cur_pokemon = pokemon
+  #   cur_species = None
+  #   for species in db_species:
+  #     if species['pokedex_id'] == cur_pokemon['pokedex_id']:
+  #         cur_species = species['species']
 
-    cur_trainer = None
-    for trainer in db_trainers:
-      if trainer['trainer_id'] == cur_pokemon['trainer_id']:
-          cur_trainer = trainer['name']
-    cur_pokemon['species'] = cur_species
-    cur_pokemon['trainer'] = cur_trainer
-    data_pokemons.append(cur_pokemon)
+  #   cur_trainer = None
+  #   for trainer in db_trainers:
+  #     if trainer['trainer_id'] == cur_pokemon['trainer_id']:
+  #         cur_trainer = trainer['name']
+  #   cur_pokemon['species'] = cur_species
+  #   cur_pokemon['trainer'] = cur_trainer
+  #   data_pokemons.append(cur_pokemon)
 
   return render_template(
     'pokemon.j2',
-    all_pokemon=data_pokemons,
-    all_species=db_species,
-    trainers=db_trainers
+    all_pokemon=db_pokemons
     )
 
 
@@ -103,7 +97,7 @@ def addpokemon():
     else:
       input_trainer = None
 
-    query = "INSERT INTO Pokemons (nickname, poke_gender, level, pokedex_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
+    query = "INSERT INTO Pokemons (nickname, gender, level, pokedex_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
     cur = mysql.connection.cursor()
     cur.execute(query, (input_nickname, input_gender, input_level, input_species, input_trainer))
     mysql.connection.commit()
