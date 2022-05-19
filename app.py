@@ -173,8 +173,6 @@ def updatepokemon(id):
 
     if input_gender == 'None':
       input_gender = None
-    if input_trainer == 'None':
-      input_trainer = None
 
     # # get species id and trainer id
     # species_id = None
