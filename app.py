@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json
+from flask import Flask, render_template, json, request, redirect
 import os
 from dotenv import load_dotenv
 import tests.sample_data
@@ -50,18 +50,22 @@ def pokemon():
   data_pokemons = []
   for pokemon in db_pokemons:
     cur_pokemon = pokemon
-    cur_species = ''
+    cur_species = None
     for species in db_species:
       if species['pokedex_id'] == cur_pokemon['pokedex_id']:
           cur_species = species['species']
 
-    cur_trainer = ''
+    cur_trainer = None
     for trainer in db_trainers:
       if trainer['trainer_id'] == cur_pokemon['trainer_id']:
           cur_trainer = trainer['name']
     cur_pokemon['species'] = cur_species
     cur_pokemon['trainer'] = cur_trainer
     data_pokemons.append(cur_pokemon)
+  
+  # print(data_pokemons)
+  # print(db_species)
+  # print(db_trainers)
 
   return render_template(
     'pokemon.j2',
@@ -70,8 +74,49 @@ def pokemon():
     trainers=db_trainers
     )
 
-@app.route('/addpokemon')
+@app.route('/addpokemon', methods=["POST", "GET"])
 def addpokemon():
+  if request.method == "POST":
+    input_nickname = request.form["nickname"]
+    input_species = request.form['species']
+    input_trainer = request.form['trainer']
+    input_level = request.form['level']
+    input_gender = request.form['gender']
+
+    # print(input_nickname, input_species, input_trainer, input_level, input_gender)
+
+    if input_gender == 'None':
+      input_gender = None
+
+    query = "SELECT pokedex_id FROM Species where species=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_species,))
+    db_species_tuple = cur.fetchall()  # got back a tuple ({'pokedex_id': 1},)
+    if db_species_tuple:
+        # print(db_species_tuple, type(db_species_tuple), db_species_tuple[0]['pokedex_id'])
+        input_species = db_species_tuple[0]['pokedex_id']
+    else:
+      input_species = None
+
+    query = "SELECT trainer_id FROM Trainers where name=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_trainer,))
+    db_trainers_tuple = cur.fetchall()  # got back a tuple of 1 dictionary element ({'trainer_id': 1},)
+    if db_trainers_tuple:
+      # print(db_trainers_tuple, type(db_trainers_tuple), db_trainers_tuple[0]['trainer_id'])
+      input_trainer = db_trainers_tuple[0]['trainer_id'] 
+    else:
+      input_trainer = None
+
+
+
+    query = "INSERT INTO Pokemons (nickname, poke_gender, level, pokedex_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_nickname, input_gender, input_level, input_species, input_trainer))
+    mysql.connection.commit()
+
+    return redirect('/pokemon')
+
   return render_template(
     'forms/addpokemon.j2',
     all_species=tests.sample_data.species,
