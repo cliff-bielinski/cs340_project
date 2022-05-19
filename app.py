@@ -62,10 +62,6 @@ def pokemon():
     cur_pokemon['species'] = cur_species
     cur_pokemon['trainer'] = cur_trainer
     data_pokemons.append(cur_pokemon)
-  
-  # print(data_pokemons)
-  # print(db_species)
-  # print(db_trainers)
 
   return render_template(
     'pokemon.j2',
@@ -74,16 +70,17 @@ def pokemon():
     trainers=db_trainers
     )
 
+
 @app.route('/addpokemon', methods=["POST", "GET"])
 def addpokemon():
+
+  # to add a pokemon
   if request.method == "POST":
     input_nickname = request.form["nickname"]
     input_species = request.form['species']
     input_trainer = request.form['trainer']
     input_level = request.form['level']
     input_gender = request.form['gender']
-
-    # print(input_nickname, input_species, input_trainer, input_level, input_gender)
 
     if input_gender == 'None':
       input_gender = None
@@ -93,7 +90,6 @@ def addpokemon():
     cur.execute(query, (input_species,))
     db_species_tuple = cur.fetchall()  # got back a tuple ({'pokedex_id': 1},)
     if db_species_tuple:
-        # print(db_species_tuple, type(db_species_tuple), db_species_tuple[0]['pokedex_id'])
         input_species = db_species_tuple[0]['pokedex_id']
     else:
       input_species = None
@@ -103,12 +99,9 @@ def addpokemon():
     cur.execute(query, (input_trainer,))
     db_trainers_tuple = cur.fetchall()  # got back a tuple of 1 dictionary element ({'trainer_id': 1},)
     if db_trainers_tuple:
-      # print(db_trainers_tuple, type(db_trainers_tuple), db_trainers_tuple[0]['trainer_id'])
       input_trainer = db_trainers_tuple[0]['trainer_id'] 
     else:
       input_trainer = None
-
-
 
     query = "INSERT INTO Pokemons (nickname, poke_gender, level, pokedex_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
     cur = mysql.connection.cursor()
@@ -117,19 +110,107 @@ def addpokemon():
 
     return redirect('/pokemon')
 
+  # to display the form
   return render_template(
     'forms/addpokemon.j2',
     all_species=tests.sample_data.species,
     trainers=tests.sample_data.trainers
   )
 
-@app.route('/updatepokemon')
-def updatepokemon():
-  return render_template(
-    'forms/updatepokemon.j2',
-    all_species=tests.sample_data.species,
-    trainers=tests.sample_data.trainers
-  )
+
+@app.route('/updatepokemon/<int:id>', methods=["POST", "GET"])
+def updatepokemon(id):
+
+  # display the form with pre-populated data
+  if request.method == "GET":
+
+    # get the target pokemon
+    query = "SELECT * FROM Pokemons WHERE pokemon_id = %s"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    db_pokemon = cur.fetchone()
+
+    # get species name and trainer name
+    query = "SELECT species FROM Species where pokedex_id=%s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (db_pokemon['pokedex_id'], ))
+    db_species = cur.fetchone()  # got back dictionary {'species': 'Bulbasaur'}
+    query = "SELECT name FROM Trainers where trainer_id=%s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (db_pokemon['trainer_id'], ))
+    db_trainer = cur.fetchone()
+
+    db_pokemon['species'] = db_species['species']
+    if db_trainer:
+      db_pokemon['trainer'] = db_trainer['name']
+    else:
+      db_pokemon['trainer'] = None
+
+    # get all species and trainer
+    query = "SELECT * FROM Species;"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    db_species = cur.fetchall()
+    query = "SELECT * FROM Trainers;"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    db_trainers = cur.fetchall()
+
+    return render_template(
+      'forms/updatepokemon.j2',
+      pokemon = db_pokemon,
+      all_species=db_species,
+      trainers=db_trainers
+    )
+
+  # update a pokemon
+  if request.method == "POST":
+    input_nickname = request.form["nickname"]
+    input_species = request.form['species']
+    input_trainer = request.form['trainer']
+    input_level = request.form['level']
+    input_gender = request.form['gender']
+
+    if input_gender == 'None':
+      input_gender = None
+
+    # get species id and trainer id
+    species_id = None
+    trainer_id = None
+    query = "SELECT pokedex_id FROM Species where species=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_species,))
+    db_species = cur.fetchone()  # got back a dictionary {'pokedex_id': 1}
+    if db_species:
+        species_id = db_species['pokedex_id']
+
+    if input_trainer != 'None':
+      query = "SELECT trainer_id FROM Trainers where name=%s"
+      cur = mysql.connection.cursor()
+      cur.execute(query, (input_trainer,))
+      db_trainers = cur.fetchone()  # got back a dictionary {'trainer_id': 1}
+      trainer_id = db_trainers['trainer_id'] 
+    else:
+      trainer_id = None
+
+    query = "UPDATE Pokemons SET nickname = %s, poke_gender = %s, level = %s, pokedex_id = %s, trainer_id = %s WHERE pokemon_id = %s"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_nickname, input_gender, input_level, species_id, trainer_id, id))
+    mysql.connection.commit()
+
+    return redirect('/pokemon')  
+
+
+@app.route("/deletepokemon/<int:id>")
+def deletepokemon(id):
+    query = "DELETE FROM Pokemons WHERE pokemon_id = '%s';"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+
+    return redirect("/pokemon")
+
+
 
 @app.route('/pokebattles')
 def pokebattles():

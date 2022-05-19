@@ -2,31 +2,39 @@
 
 {% block content %}
   <h2>Update Pokemon</h2>
-  <form>
+  <form action="/updatepokemon/{{pokemon['pokemon_id']}}" method="post">
     <div class="form-group">
       <label for="nickname">Nickname</label>
-      <input type="text" class="form-control" id="nickname">
+      <input type="text" class="form-control" id="nickname" name="nickname" value="{{pokemon['nickname']}}">
     </div>
     <div class="form-group">
       <label for="species">Species</label>
-      <select id="species" class="form-select">
+      <select id="species" name="species" class="form-select">
         {% for species in all_species %}
-          <option value="{{species.species}}">{{ species.species }}</option>
+          {% if species.species == pokemon['species'] %}
+            <option value="{{species.species}}" selected>{{species.species}}</option>
+          {% else %}
+            <option value="{{species.species}}">{{ species.species }}</option>
+          {% endif %}
         {% endfor %}
       </select>
     </div>
     <div class="form-group">
       <label for="trainer">Trainer</label>
-      <select id="trainer" class="form-select">
+      <select id="trainer" name="trainer" class="form-select">
         <option value="None">None</option>
         {% for trainer in trainers %}
-          <option value="{{trainer.name}}">{{ trainer.name }}</option>
+          {% if trainer.name == pokemon['trainer'] %}
+            <option value="{{trainer.name}}" selected>{{trainer.name}}</option>
+          {% else %}
+            <option value="{{trainer.name}}">{{ trainer.name }}</option>
+          {% endif %}
         {% endfor %}
       </select>
     </div>
     <div class="form-group">
       <label for="level" class="form-label">Level</label>
-      <input type="number" class="form-control" id="level" required>
+      <input type="number" class="form-control" id="level" name="level" value="{{pokemon['level']}}" required>
     </div>
     <fieldset class="form-group">
       <div class="row">
