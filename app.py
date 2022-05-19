@@ -79,25 +79,40 @@ def addpokemon():
     if input_gender == 'None':
       input_gender = None
 
-    query = "SELECT pokedex_id FROM Species where species=%s"
-    cur = mysql.connection.cursor()
-    cur.execute(query, (input_species,))
-    db_species_tuple = cur.fetchall()  # got back a tuple ({'pokedex_id': 1},)
-    if db_species_tuple:
-        input_species = db_species_tuple[0]['pokedex_id']
-    else:
-      input_species = None
+    # query = "SELECT pokedex_id FROM Species where species=%s"
+    # cur = mysql.connection.cursor()
+    # cur.execute(query, (input_species,))
+    # db_species_tuple = cur.fetchall()  # got back a tuple ({'pokedex_id': 1},)
+    # if db_species_tuple:
+    #     input_species = db_species_tuple[0]['pokedex_id']
+    # else:
+    #   input_species = None
 
-    query = "SELECT trainer_id FROM Trainers where name=%s"
-    cur = mysql.connection.cursor()
-    cur.execute(query, (input_trainer,))
-    db_trainers_tuple = cur.fetchall()  # got back a tuple of 1 dictionary element ({'trainer_id': 1},)
-    if db_trainers_tuple:
-      input_trainer = db_trainers_tuple[0]['trainer_id'] 
-    else:
-      input_trainer = None
+    # query = "SELECT trainer_id FROM Trainers where name=%s"
+    # cur = mysql.connection.cursor()
+    # cur.execute(query, (input_trainer,))
+    # db_trainers_tuple = cur.fetchall()  # got back a tuple of 1 dictionary element ({'trainer_id': 1},)
+    # if db_trainers_tuple:
+    #   input_trainer = db_trainers_tuple[0]['trainer_id'] 
+    # else:
+    #   input_trainer = None
 
-    query = "INSERT INTO Pokemons (nickname, gender, level, pokedex_id, trainer_id) VALUES (%s, %s, %s, %s, %s)"
+    query = """
+      INSERT INTO `Pokemons` (
+        `nickname`,
+        `gender`,
+        `level`,
+        `pokedex_id`,
+        `trainer_id`
+      )
+      VALUES (
+        %s,
+        %s,
+        %s,
+        (SELECT `pokedex_id` FROM `Species` WHERE `species` = %s),
+        (SELECT `trainer_id` FROM `Trainers` WHERE `name` = %s)
+      );
+    """
     cur = mysql.connection.cursor()
     cur.execute(query, (input_nickname, input_gender, input_level, input_species, input_trainer))
     mysql.connection.commit()
