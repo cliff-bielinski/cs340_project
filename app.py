@@ -33,15 +33,15 @@ def pokemon():
   cur.execute(query)
   db_pokemons = cur.fetchall()
 
-  # query = "SELECT * FROM Species;"
-  # cur = mysql.connection.cursor()
-  # cur.execute(query)
-  # db_species = cur.fetchall()
+  query = "SELECT * FROM Species;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_species = cur.fetchall()
   
-  # query = "SELECT * FROM Trainers;"
-  # cur = mysql.connection.cursor()
-  # cur.execute(query)
-  # db_trainers = cur.fetchall()
+  query = "SELECT * FROM Trainers;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_trainers = cur.fetchall()
 
   # data_pokemons = []
   # for pokemon in db_pokemons:
@@ -61,7 +61,9 @@ def pokemon():
 
   return render_template(
     'pokemon.j2',
-    all_pokemon=db_pokemons
+    all_pokemon=db_pokemons,
+    all_species=db_species,
+    trainers=db_trainers
     )
 
 
@@ -119,11 +121,21 @@ def addpokemon():
 
     return redirect('/pokemon')
 
+  # get species and trainers for form
+  query = "SELECT * FROM Species;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_species = cur.fetchall()
+  query = "SELECT * FROM Trainers;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_trainers = cur.fetchall()
+
   # to display the form
   return render_template(
     'forms/addpokemon.j2',
-    all_species=tests.sample_data.species,
-    trainers=tests.sample_data.trainers
+    all_species=db_species,
+    trainers=db_trainers
   )
 
 
