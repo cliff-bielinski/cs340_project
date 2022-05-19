@@ -119,26 +119,32 @@ def updatepokemon(id):
   if request.method == "GET":
 
     # get the target pokemon
-    query = "SELECT * FROM Pokemons WHERE pokemon_id = %s"
+    query = """
+      SELECT `pokemon_id`, `nickname`, Pokemons.gender, `level`, Species.species, Trainers.name AS trainer
+      FROM `Pokemons` 
+      INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
+      LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
+      WHERE `pokemon_id` = %s
+    """
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     db_pokemon = cur.fetchone()
 
-    # get species name and trainer name
-    query = "SELECT species FROM Species where pokedex_id=%s;"
-    cur = mysql.connection.cursor()
-    cur.execute(query, (db_pokemon['pokedex_id'], ))
-    db_species = cur.fetchone()  # got back dictionary {'species': 'Bulbasaur'}
-    query = "SELECT name FROM Trainers where trainer_id=%s;"
-    cur = mysql.connection.cursor()
-    cur.execute(query, (db_pokemon['trainer_id'], ))
-    db_trainer = cur.fetchone()
+    # # get species name and trainer name
+    # query = "SELECT species FROM Species where pokedex_id=%s;"
+    # cur = mysql.connection.cursor()
+    # cur.execute(query, (db_pokemon['pokedex_id'], ))
+    # db_species = cur.fetchone()  # got back dictionary {'species': 'Bulbasaur'}
+    # query = "SELECT name FROM Trainers where trainer_id=%s;"
+    # cur = mysql.connection.cursor()
+    # cur.execute(query, (db_pokemon['trainer_id'], ))
+    # db_trainer = cur.fetchone()
 
-    db_pokemon['species'] = db_species['species']
-    if db_trainer:
-      db_pokemon['trainer'] = db_trainer['name']
-    else:
-      db_pokemon['trainer'] = None
+    # db_pokemon['species'] = db_species['species']
+    # if db_trainer:
+    #   db_pokemon['trainer'] = db_trainer['name']
+    # else:
+    #   db_pokemon['trainer'] = None
 
     # get all species and trainer
     query = "SELECT * FROM Species;"
