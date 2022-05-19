@@ -90,13 +90,13 @@ DELETE FROM `Trainers` WHERE `trainer_id` = :trainer_id_from_browser;
 -- Pokemons queries 
 -- -----------------------------------------
 -- get all pokemon_id, nickname, gender, level, species, trainer to populate Current Pokemon
-SELECT `pokemon_id`, `nickname`, `gender`, `level`, Species.species, Trainers.name AS trainer
+SELECT `pokemon_id`, `nickname`, Pokemons.gender, `level`, Species.species, Trainers.name AS trainer
 FROM `Pokemons` 
 INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
 LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id;
 
 -- get a single Pokemon's data for the Update Pokemon Form
-SELECT `pokemon_id`, `nickname`, `gender`, `level`, Species.species, Trainers.name AS trainer
+SELECT `pokemon_id`, `nickname`, Pokemons.gender, `level`, Species.species, Trainers.name AS trainer
 FROM `Pokemons` 
 INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
 LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
