@@ -173,29 +173,42 @@ def updatepokemon(id):
 
     if input_gender == 'None':
       input_gender = None
+    if input_trainer == 'None':
+      input_trainer = None
 
-    # get species id and trainer id
-    species_id = None
-    trainer_id = None
-    query = "SELECT pokedex_id FROM Species where species=%s"
+    # # get species id and trainer id
+    # species_id = None
+    # trainer_id = None
+    # query = "SELECT pokedex_id FROM Species where species=%s"
+    # cur = mysql.connection.cursor()
+    # cur.execute(query, (input_species,))
+    # db_species = cur.fetchone()  # got back a dictionary {'pokedex_id': 1}
+    # if db_species:
+    #     species_id = db_species['pokedex_id']
+
+    # if input_trainer != 'None':
+    #   query = "SELECT trainer_id FROM Trainers where name=%s"
+    #   cur = mysql.connection.cursor()
+    #   cur.execute(query, (input_trainer,))
+    #   db_trainers = cur.fetchone()  # got back a dictionary {'trainer_id': 1}
+    #   trainer_id = db_trainers['trainer_id'] 
+    # else:
+    #   trainer_id = None
+
+
+    query = """
+      UPDATE `Pokemons`
+      SET 
+        `nickname` = %s,
+        `gender` = %s,
+        `level` = %s,
+        `pokedex_id` = (SELECT `pokedex_id` FROM `Species` WHERE `species` = %s),
+        `trainer_id` = (SELECT `trainer_id` FROM `Trainers` WHERE `name` = %s)
+      WHERE `pokemon_id` = %s;
+    """
+    # query = "UPDATE Pokemons SET nickname = %s, gender = %s, level = %s, pokedex_id = %s, trainer_id = %s WHERE pokemon_id = %s"
     cur = mysql.connection.cursor()
-    cur.execute(query, (input_species,))
-    db_species = cur.fetchone()  # got back a dictionary {'pokedex_id': 1}
-    if db_species:
-        species_id = db_species['pokedex_id']
-
-    if input_trainer != 'None':
-      query = "SELECT trainer_id FROM Trainers where name=%s"
-      cur = mysql.connection.cursor()
-      cur.execute(query, (input_trainer,))
-      db_trainers = cur.fetchone()  # got back a dictionary {'trainer_id': 1}
-      trainer_id = db_trainers['trainer_id'] 
-    else:
-      trainer_id = None
-
-    query = "UPDATE Pokemons SET nickname = %s, poke_gender = %s, level = %s, pokedex_id = %s, trainer_id = %s WHERE pokemon_id = %s"
-    cur = mysql.connection.cursor()
-    cur.execute(query, (input_nickname, input_gender, input_level, species_id, trainer_id, id))
+    cur.execute(query, (input_nickname, input_gender, input_level, input_species, input_trainer, id))
     mysql.connection.commit()
 
     return redirect('/pokemon')  
