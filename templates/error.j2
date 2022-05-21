@@ -1,0 +1,8 @@
+{% extends 'base.j2' %}
+
+{% block content %}
+  <h1>{% block title %} Error! {% endblock %}</h1>
+  <p>Unable to perform requested operation.</p>
+  <p>Error Message:</p>
+  <p>{{error}}</p>
+{% endblock %}

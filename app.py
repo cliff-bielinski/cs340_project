@@ -1,4 +1,5 @@
-from flask import Flask, render_template, json, request, redirect
+import MySQLdb
+from flask import Flask, render_template, jsonify, request, redirect
 import os
 from dotenv import load_dotenv
 import tests.sample_data
@@ -8,6 +9,7 @@ from flask_mysqldb import MySQL
 load_dotenv()  # loads environmental variables from .env
 app = Flask(__name__)
 
+app.secret_key = os.getenv("secret_key")
 app.config["MYSQL_HOST"] = os.getenv("host")
 app.config["MYSQL_USER"] = os.getenv("user")
 app.config["MYSQL_PASSWORD"] = os.getenv("passwd")
@@ -173,10 +175,15 @@ def updatepokemon(id):
 def deletepokemon(id):
     query = "DELETE FROM Pokemons WHERE pokemon_id = '%s';"
     cur = mysql.connection.cursor()
-    cur.execute(query, (id,))
-    mysql.connection.commit()
-
-    return redirect("/pokemon")
+    try:
+      cur.execute(query, (id,))
+    except MySQLdb.error as e:
+      print(e)
+    except:
+      print("Unknown error!")
+    finally:
+      mysql.connection.commit()
+      return redirect("/pokemon")
 
 
 
@@ -325,6 +332,11 @@ def addstadium():
 @app.route('/updatestadium')
 def updatestadium():
   return render_template('forms/updatestadium.j2')
+
+# Error Handling for MySQL DB errors
+@app.errorhandler(MySQLdb.Error)
+def internal_error(error):
+  return render_template('error.j2', error=error), 500
 
 # Listener
 if __name__ == '__main__':
