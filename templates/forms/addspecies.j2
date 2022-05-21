@@ -2,21 +2,21 @@
 
 {% block content %}
   <h2>Add New Species</h2>
-  <form>
+  <form method="post">
     <div class="row g-2 form-group">
       <div class="col-md-2">
         <label for="pokedex-id">Pokedex Number</label>
-        <input type="number" class="form-control" id="pokedex-id" required>
+        <input type="number" class="form-control" id="pokedex-id" name="pokedex-id" required>
       </div>
       <div class="col-md">
         <label for="species" >Species Name</label>
-        <input type="text" class="form-control" id="species" required>
+        <input type="text" class="form-control" id="species" name="species" required>
       </div>
     </div>
     <div class="row g-2 form-group">
       <div class="col-md-6">
         <label for="type">Primary Type</label>
-        <select id="type" class="form-select">
+        <select id="type" class="form-select" name="type">
           {% for type in types %}
             <option value="{{type}}">{{ type }}</option>
           {% endfor %}
@@ -24,7 +24,7 @@
       </div>
       <div class="col-md-6 form-group">
         <label for="secondary-type">Secondary Type</label>
-        <select id="secondary-type" class="form-select">
+        <select id="secondary-type" class="form-select" name="secondary-type">
           <option selected>None</option>
           {% for type in types %}
             <option value="{{type}}">{{ type }}</option>

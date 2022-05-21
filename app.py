@@ -228,7 +228,8 @@ def updatebattle():
 def species():
   # get all species from Species
   query = """
-    SELECT `pokedex_id`, `species`, `type`, `secondary_type` FROM `Species`;
+    SELECT `pokedex_id`, `species`, `type`, `secondary_type` FROM `Species`
+    ORDER BY `pokedex_id`;
   """
   cur = mysql.connection.cursor()
   cur.execute(query)
@@ -236,8 +237,33 @@ def species():
 
   return render_template('species.j2', all_species=db_species)
 
-@app.route('/addspecies')
+@app.route('/addspecies', methods=["POST", "GET"])
 def addspecies():
+  # adding a new species
+  if request.method == "POST":
+    input_id = request.form['pokedex-id']
+    input_species = request.form['species']
+    input_type = request.form['type']
+    input_sec_type = request.form['secondary-type']
+
+    if input_sec_type == "None":
+      input_sec_type = None
+    
+    query = """
+      INSERT INTO `Species` (
+        `pokedex_id`,
+        `species`,
+        `type`,
+        `secondary_type`
+      )
+      VALUES (%s, %s, %s, %s);
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_id, input_species, input_type, input_sec_type))
+    mysql.connection.commit()
+
+    return redirect('/species')
+
   return render_template('forms/addspecies.j2', types=tests.sample_data.types)
 
 @app.route('/updatespecies')
