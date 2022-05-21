@@ -266,9 +266,24 @@ def addspecies():
 
   return render_template('forms/addspecies.j2', types=tests.sample_data.types)
 
-@app.route('/updatespecies')
-def updatespecies():
-  return render_template('forms/updatespecies.j2', types=tests.sample_data.types)
+@app.route('/updatespecies/<int:id>', methods=["POST", "GET"])
+def updatespecies(id):
+  # display current attributes of species to update
+  if request.method == 'GET':
+    # get current attributes of species to update
+    query = """
+      SELECT `pokedex_id`, `species`, `type`, `secondary_type`
+      FROM `Species` WHERE `pokedex_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    db_species = cur.fetchone()
+
+  return render_template(
+    'forms/updatespecies.j2', 
+    types=tests.sample_data.types,
+    species=db_species
+  )
 
 @app.route('/stadiums')
 def stadiums():

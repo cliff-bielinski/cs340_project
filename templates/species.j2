@@ -21,7 +21,7 @@
         <td>{{ species['type'] }}</td>
         <td>{{ species['secondary_type'] }}</td>
         <td>
-          <a class="navbar-brand" href="{{ url_for('updatespecies') }}">
+          <a class="navbar-brand" href="updatespecies/{{species['pokedex_id']}}">
             <img src="/static/img/pokeball.png" alt="update" width="40" height="40">
           </a>
         </td>
