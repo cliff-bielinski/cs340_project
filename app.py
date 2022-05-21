@@ -279,11 +279,30 @@ def updatespecies(id):
     cur.execute(query, (id,))
     db_species = cur.fetchone()
 
-  return render_template(
-    'forms/updatespecies.j2', 
-    types=tests.sample_data.types,
-    species=db_species
-  )
+    return render_template(
+      'forms/updatespecies.j2', 
+      types=tests.sample_data.types,
+      species=db_species
+    )
+
+  if request.method == "POST":
+    input_species = request.form['species']
+    input_type = request.form['type']
+    input_sec_type = request.form['secondary-type']
+
+    if input_sec_type == "None":
+      input_sec_type = None
+    
+    query = """
+      UPDATE `Species` 
+      SET `species` = %s, `type` = %s, `secondary_type` = %s
+      WHERE `pokedex_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_species, input_type, input_sec_type, id))
+    mysql.connection.commit()
+
+    return redirect('/species')
 
 @app.route('/stadiums')
 def stadiums():

@@ -2,21 +2,21 @@
 
 {% block content %}
   <h2>Update Species</h2>
-  <form>
+  <form action="/updatespecies/{{species['pokedex_id']}}" method="post">
     <div class="row g-2">
       <div class="col-md-2">
         <label for="pokedex-id" class="form-label">Pokedex Number</label>
-        <input type="number" class="form-control" id="pokedex-id" value="{{species['pokedex_id']}}"required>
+        <input type="number" class="form-control" id="pokedex-id" name="pokedex-id" value="{{species['pokedex_id']}}"required disabled>
       </div>
       <div class="col-md">
         <label for="species" class="form-label">Species Name</label>
-        <input type="text" class="form-control" id="species" value="{{species['species']}}"required>
+        <input type="text" class="form-control" id="species" name="species" value="{{species['species']}}"required>
       </div>
     </div>
     <div class="row g-2">
       <div class="col-md-6">
         <label for="type" class="form-label">Primary Type</label>
-        <select id="type" class="form-select">
+        <select id="type" class="form-select" name="type">
           {% for type in types %}
             {% if type == species['type'] %}
               <option value="{{type}}" selected>{{ type }}</option>
@@ -28,7 +28,7 @@
       </div>
       <div class="col-md-6">
         <label for="secondary-type" class="form-label">Secondary Type</label>
-        <select id="secondary-type" class="form-select">
+        <select id="secondary-type" class="form-select" name="secondary-type">
           <option selected>None</option>
           {% for type in types %}
             {% if type == species['secondary_type'] %}
