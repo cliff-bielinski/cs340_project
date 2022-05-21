@@ -304,6 +304,16 @@ def updatespecies(id):
 
     return redirect('/species')
 
+@app.route("/deletespecies/<int:id>")
+def deletespecies(id):
+    # deletes selected Species by pokedex_id
+    query = "DELETE FROM `Species` WHERE `pokedex_id` = %s"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+
+    return redirect("/species")
+
 @app.route('/stadiums')
 def stadiums():
   return render_template('stadiums.j2', stadiums=tests.sample_data.stadiums)
