@@ -226,7 +226,15 @@ def updatebattle():
 
 @app.route('/species')
 def species():
-  return render_template('species.j2', all_species=tests.sample_data.species)
+  # get all species from Species
+  query = """
+    SELECT `pokedex_id`, `species`, `type`, `secondary_type` FROM `Species`;
+  """
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_species = cur.fetchall()
+
+  return render_template('species.j2', all_species=db_species)
 
 @app.route('/addspecies')
 def addspecies():
