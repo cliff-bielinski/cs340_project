@@ -66,6 +66,9 @@ def addpokemon():
 
     if input_gender == 'None':
       input_gender = None
+    
+    if not input_nickname:
+      input_nickname = None
 
     query = """
       INSERT INTO `Pokemons` (
@@ -152,6 +155,9 @@ def updatepokemon(id):
 
     if input_gender == 'None':
       input_gender = None
+
+    if not input_nickname:
+      input_nickname = None
 
     query = """
       UPDATE `Pokemons`
