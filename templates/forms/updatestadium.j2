@@ -2,11 +2,11 @@
 
 {% block content %}
   <h2>Update Stadium</h2>
-  <form>
+  <form action="/updatestadium/{{stadiums['stadium_id']}}" method="post">
     <div class="form-row align-items-center">
       <div class="col-auto">
         <label class="sr-only" for="stadium-name">Stadium Name</label>
-        <input type="text" class="form-control mb-2" id="stadium-name" placeholder="Stadium Name" required>
+        <input type="text" class="form-control mb-2" id="stadium-name" name="stadium-name" value="{{stadiums.name}}" required>
       </div>
       <div class="col-auto">
         <label class="sr-only" for="location">Location</label>
@@ -14,7 +14,7 @@
           <div class="input-group-prepend">
             <div class="input-group-text">@</div>
           </div>
-          <input type="text" class="form-control" id="location" placeholder="Location" required>
+          <input type="text" class="form-control" id="location" name="location" value="{{stadiums.location}}" required>
         </div>
       </div>
       <div class="col-auto">

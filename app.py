@@ -361,9 +361,34 @@ def addstadium():
 
   return render_template('forms/addstadium.j2')
 
-@app.route('/updatestadium')
-def updatestadium():
-  return render_template('forms/updatestadium.j2')
+@app.route('/updatestadium/<int:id>', methods=["POST", "GET"])
+def updatestadium(id):
+  if request.method == 'GET':
+    # get current attributes of stadium to update
+    query = """
+      SELECT `stadium_id`, `name`, `location`
+      FROM `Stadiums` WHERE `stadium_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    db_stadiums = cur.fetchone()
+    return render_template('forms/updatestadium.j2', stadiums=db_stadiums)
+  
+  if request.method == "POST":
+    # update stadium with new form data
+    input_name = request.form['stadium-name']
+    input_location = request.form['location']
+
+    query = """
+      UPDATE `Stadiums` 
+      SET `name` = %s, `location` = %s
+      WHERE `stadium_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_name, input_location, id))
+    mysql.connection.commit()
+
+    return redirect('/stadiums')
 
 # Error Handling for MySQL DB errors
 @app.errorhandler(MySQLdb.Error)
