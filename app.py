@@ -390,6 +390,16 @@ def updatestadium(id):
 
     return redirect('/stadiums')
 
+@app.route("/deletestadium/<int:id>")
+def deletestadium(id):
+    # deletes selected stadium by stadium_id
+    query = "DELETE FROM `Stadiums` WHERE `stadium_id` = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+
+    return redirect("/stadiums")
+
 # Error Handling for MySQL DB errors
 @app.errorhandler(MySQLdb.Error)
 def internal_error(error):
