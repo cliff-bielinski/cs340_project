@@ -329,10 +329,36 @@ def deletespecies(id):
 
 @app.route('/stadiums')
 def stadiums():
-  return render_template('stadiums.j2', stadiums=tests.sample_data.stadiums)
+  # get all stadiums
+  query = """
+    SELECT `stadium_id`, `name`, `location` FROM `Stadiums`;
+  """
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_stadiums = cur.fetchall()
 
-@app.route('/addstadium')
+  return render_template('stadiums.j2', stadiums=db_stadiums)
+
+@app.route('/addstadium', methods=["POST", "GET"])
 def addstadium():
+  # adding a new stadium
+  if request.method == "POST":
+    input_name = request.form['stadium-name']
+    input_location = request.form['location']
+
+    query = """
+      INSERT INTO `Stadiums` (
+        `name`,
+        `location`
+      )
+      VALUES (%s, %s)
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_name, input_location))
+    mysql.connection.commit()
+
+    return redirect('/stadiums')
+
   return render_template('forms/addstadium.j2')
 
 @app.route('/updatestadium')

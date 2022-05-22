@@ -2,11 +2,11 @@
 
 {% block content %}
   <h2>Add New Stadium</h2>
-  <form>
+  <form method="post">
     <div class="form-row align-items-center form-group">
       <div class="col-auto">
         <label class="sr-only" for="stadium-name">Stadium Name</label>
-        <input type="text" class="form-control mb-2" id="stadium-name" placeholder="Stadium Name" required>
+        <input type="text" class="form-control mb-2" id="stadium-name" name="stadium-name" placeholder="Stadium Name" required>
       </div>
       <div class="col-auto">
         <label class="sr-only" for="location">Location</label>
@@ -14,7 +14,7 @@
           <div class="input-group-prepend">
             <div class="input-group-text">@</div>
           </div>
-          <input type="text" class="form-control" id="location" placeholder="Location" required>
+          <input type="text" class="form-control" id="location" name="location" placeholder="Location" required>
         </div>
       </div>
       <div class="col-auto">
