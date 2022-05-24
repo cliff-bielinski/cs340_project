@@ -2,17 +2,17 @@
 
 {% block content %}
   <h2>Update Trainer</h2>
-  <form>
+  <form action="/updatetrainer/{{trainer['trainer_id']}}" method="post">
     <div class="form-group row">
       <label for="trainer-name" class="col-sm-2 col-form-label">Name</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="trainer-name" required>
+        <input type="text" class="form-control" id="trainer-name" name="trainer-name" value="{{trainer['name']}}" required>
       </div>
     </div>
     <div class="form-group row">
       <label for="birthday" class="col-sm-2 col-form-label">Birthdate</label>
       <div class="col-sm-10">
-        <input type="date" class="form-control" id="birthday" required>
+        <input type="date" class="form-control" id="birthday" name="birthday" value="{{trainer['birthdate']}}" required>
       </div>
     </div>
     <fieldset class="form-group">
@@ -20,19 +20,19 @@
         <legend class="col-form-label col-sm-2 pt-0">Gender</legend>
         <div class="col-sm-10">
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="gender" id="male" value="Male" checked>
+            <input class="form-check-input" type="radio" name="gender" id="male" value="Male" {% if trainer.gender == 'Male' %} checked {% endif %}>
             <label class="form-check-label" for="gridRadios1">
               Male
             </label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="gender" id="female" value="Female">
+            <input class="form-check-input" type="radio" name="gender" id="female" value="Female" {% if trainer.gender == 'Female' %} checked {% endif %}>
             <label class="form-check-label" for="gridRadios2">
               Female
             </label>
           </div>
           <div class="form-check disabled">
-            <input class="form-check-input" type="radio" name="gender" id="nonbinary" value="Nonbinary">
+            <input class="form-check-input" type="radio" name="gender" id="nonbinary" value="Nonbinary" {% if trainer.gender == 'Nonbinary' %} checked {% endif %}>
             <label class="form-check-label" for="gridRadios3">
               Non-binary
             </label>

@@ -240,9 +240,35 @@ def addtrainer():
 
   return render_template('forms/addtrainer.j2')
 
-@app.route('/updatetrainer')
-def updatetrainer():
-  return render_template('forms/updatetrainer.j2')
+@app.route('/updatetrainer/<int:id>', methods=["POST", "GET"])
+def updatetrainer(id):
+  if request.method == "GET":
+    # get the target trainer for update
+    query = """
+      SELECT `trainer_id`, `name`, `birthdate`, `gender`
+      FROM `Trainers` WHERE `trainer_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    db_trainer = cur.fetchone()
+    
+    return render_template('forms/updatetrainer.j2', trainer=db_trainer)
+
+  if request.method == "POST":
+    input_name = request.form["trainer-name"]
+    input_birthday = request.form["birthday"]
+    input_gender = request.form["gender"]
+
+    query = """
+      UPDATE `Trainers`
+      SET `name` = %s, `birthdate` = %s, `gender` = %s
+      WHERE `trainer_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_name, input_birthday, input_gender, id))
+    mysql.connection.commit()
+
+    return redirect('/trainers')
 
 @app.route('/battles')
 def battles():
