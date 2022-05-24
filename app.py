@@ -179,17 +179,12 @@ def updatepokemon(id):
 
 @app.route("/deletepokemon/<int:id>")
 def deletepokemon(id):
+    # delete selected pokemon
     query = "DELETE FROM Pokemons WHERE pokemon_id = '%s';"
     cur = mysql.connection.cursor()
-    try:
-      cur.execute(query, (id,))
-    except MySQLdb.error as e:
-      print(e)
-    except:
-      print("Unknown error!")
-    finally:
-      mysql.connection.commit()
-      return redirect("/pokemon")
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+    return redirect("/pokemon")
 
 
 
@@ -269,6 +264,15 @@ def updatetrainer(id):
     mysql.connection.commit()
 
     return redirect('/trainers')
+
+@app.route("/deletetrainer/<int:id>")
+def deletetrainer(id):
+    # delete selected trainer
+    query = "DELETE FROM `Trainers` WHERE `trainer_id` = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+    return redirect("/trainers")
 
 @app.route('/battles')
 def battles():
