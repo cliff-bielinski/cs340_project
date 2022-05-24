@@ -276,7 +276,19 @@ def deletetrainer(id):
 
 @app.route('/battles')
 def battles():
-  return render_template('battles.j2', battles=tests.sample_data.battles)
+  # get battles from database and display them
+  query = """
+    SELECT `battle_id`, `date`, Stadiums.name AS `location`, winner.name AS `winner`, loser.name AS `loser`
+    FROM `Battles` 
+    INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
+    INNER JOIN `Trainers` winner ON winner.trainer_id = Battles.winning_trainer
+    INNER JOIN `Trainers` loser ON loser.trainer_id = Battles.losing_trainer;
+  """
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_battles = cur.fetchall()
+
+  return render_template('battles.j2', battles=db_battles)
 
 @app.route('/addbattle')
 def addbattle():
