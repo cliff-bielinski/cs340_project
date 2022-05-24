@@ -207,10 +207,37 @@ def updatepokebattle():
 
 @app.route('/trainers')
 def trainers():
-  return render_template('trainers.j2', trainers=tests.sample_data.trainers)
+  # get all trainers from the database
+  query = """
+    SELECT `trainer_id`, `name`, `birthdate`, `gender` FROM `Trainers`;
+  """
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_trainers = cur.fetchall()
+  return render_template('trainers.j2', trainers=db_trainers)
 
-@app.route('/addtrainer')
+@app.route('/addtrainer', methods=["POST", "GET"])
 def addtrainer():
+  # add a trainer
+  if request.method == "POST":
+    input_name = request.form["trainer-name"]
+    input_birthday = request.form["birthday"]
+    input_gender = request.form["gender"]
+
+    query = """
+      INSERT INTO `Trainers` (
+        `name`,
+        `birthdate`,
+        `gender`
+      )
+      VALUES (%s, %s, %s);
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_name, input_birthday, input_gender))
+    mysql.connection.commit()
+
+    return redirect('/trainers')
+
   return render_template('forms/addtrainer.j2')
 
 @app.route('/updatetrainer')

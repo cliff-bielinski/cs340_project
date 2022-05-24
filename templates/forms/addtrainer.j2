@@ -2,17 +2,17 @@
 
 {% block content %}
   <h2>Add New Trainer</h2>
-  <form>
+  <form method="post">
     <div class="form-group row">
       <label for="trainer-name" class="col-sm-2 col-form-label">Name</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="trainer-name" required>
+        <input type="text" class="form-control" id="trainer-name" name="trainer-name" required>
       </div>
     </div>
     <div class="form-group row">
       <label for="birthday" class="col-sm-2 col-form-label">Birthdate</label>
       <div class="col-sm-10">
-        <input type="date" class="form-control" id="birthday" required>
+        <input type="date" class="form-control" id="birthday" name="birthday" required>
       </div>
     </div>
     <fieldset class="form-group">
