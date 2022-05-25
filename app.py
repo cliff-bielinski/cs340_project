@@ -282,7 +282,8 @@ def battles():
     FROM `Battles` 
     INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
     INNER JOIN `Trainers` winner ON winner.trainer_id = Battles.winning_trainer
-    INNER JOIN `Trainers` loser ON loser.trainer_id = Battles.losing_trainer;
+    INNER JOIN `Trainers` loser ON loser.trainer_id = Battles.losing_trainer
+    ORDER BY `battle_id`;
   """
   cur = mysql.connection.cursor()
   cur.execute(query)
@@ -290,12 +291,48 @@ def battles():
 
   return render_template('battles.j2', battles=db_battles)
 
-@app.route('/addbattle')
+@app.route('/addbattle', methods=["POST", "GET"])
 def addbattle():
+  # add a battle to the database
+  if request.method == "POST":
+    input_date = request.form['date']
+    input_location = request.form['location']
+    input_winner = request.form['winner']
+    input_loser = request.form['loser'] 
+
+    query = """
+      INSERT INTO `Battles` (
+        `date`,
+        `stadium_id`,
+        `winning_trainer`,
+        `losing_trainer`
+      )
+      VALUES (
+        %s,
+        (SELECT `stadium_id` FROM `Stadiums` WHERE `name` = %s),
+        (SELECT `trainer_id` FROM `Trainers` WHERE `name` = %s),
+        (SELECT `trainer_id` FROM `Trainers` WHERE `name` = %s)
+      );
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_date, input_location, input_winner, input_loser))
+    mysql.connection.commit()
+    return redirect('/battles')
+
+  # get trainers and stadiums for population of add battle form
+  query = "SELECT * FROM Trainers;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_trainers = cur.fetchall()
+  query = "SELECT * FROM Stadiums;"
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_stadiums = cur.fetchall()
+
   return render_template(
     'forms/addbattle.j2', 
-    locations=tests.sample_data.stadiums,
-    trainers=tests.sample_data.trainers
+    locations=db_stadiums,
+    trainers=db_trainers
   )
 
 @app.route('/updatebattle')
