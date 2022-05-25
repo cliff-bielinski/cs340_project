@@ -335,13 +335,70 @@ def addbattle():
     trainers=db_trainers
   )
 
-@app.route('/updatebattle')
-def updatebattle():
-  return render_template(
-    'forms/updatebattle.j2', 
-    locations=tests.sample_data.stadiums,
-    trainers=tests.sample_data.trainers
-  )
+@app.route('/updatebattle/<int:id>', methods=["POST", "GET"])
+def updatebattle(id):
+  if request.method == "GET":
+    # get the target battle to update
+    query = """
+      SELECT `battle_id`, `date`, Stadiums.name AS `location`, winner.name AS `winner`, loser.name AS `loser`
+      FROM `Battles` 
+      INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
+      INNER JOIN `Trainers` winner ON winner.trainer_id = Battles.winning_trainer
+      INNER JOIN `Trainers` loser ON loser.trainer_id = Battles.losing_trainer
+      WHERE `battle_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    db_battle = cur.fetchone()
+
+    # get trainers and stadiums for population of add battle form
+    query = "SELECT * FROM Trainers;"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    db_trainers = cur.fetchall()
+    query = "SELECT * FROM Stadiums;"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    db_stadiums = cur.fetchall()
+
+    return render_template(
+      'forms/updatebattle.j2', 
+      battle=db_battle,
+      locations=db_stadiums,
+      trainers=db_trainers
+    )
+  
+  if request.method == "POST":
+    # update a battle
+    input_date = request.form['date']
+    input_location = request.form['location']
+    input_winner = request.form['winner']
+    input_loser = request.form['loser'] 
+
+    query = """
+      UPDATE `Battles`
+      SET
+        `date` = %s,
+        `stadium_id` = (SELECT `stadium_id` FROM `Stadiums` WHERE `name` = %s),
+        `winning_trainer` = (SELECT `trainer_id` FROM `Trainers` WHERE `name` = %s),
+        `losing_trainer` = (SELECT `trainer_id` FROM `Trainers` WHERE `name` = %s)
+      WHERE `battle_id` = %s; 
+    """
+
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_date, input_location, input_winner, input_loser, id))
+    mysql.connection.commit()
+
+    return redirect('/battles')  
+
+@app.route("/deletebattle/<int:id>")
+def deletebattle(id):
+    # delete selected battle
+    query = "DELETE FROM `Battles` WHERE `battle_id` = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+    return redirect("/battles")
 
 @app.route('/species')
 def species():
