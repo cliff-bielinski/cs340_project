@@ -440,7 +440,22 @@ def addspecies():
 
     return redirect('/species')
 
-  return render_template('forms/addspecies.j2', types=tests.sample_data.types)
+  if request.method == "GET":
+    query = """
+      SELECT `pokedex_id`FROM `Species`
+      ORDER BY `pokedex_id`;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    db_pokedex = cur.fetchall()
+    taken_pokedex = []
+    for i in db_pokedex:
+      taken_pokedex.append(i["pokedex_id"])
+    available_pokedex = []
+    for i in range(1, 151):
+      if i not in taken_pokedex:
+        available_pokedex.append(i) 
+    return render_template('forms/addspecies.j2', available_pokedex=available_pokedex, types=tests.sample_data.types)
 
 @app.route('/updatespecies/<int:id>', methods=["POST", "GET"])
 def updatespecies(id):
