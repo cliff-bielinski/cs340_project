@@ -271,6 +271,15 @@ def addpokebattle(id):
 def updatepokebattle():
   return render_template('forms/updatepokebattle.j2')
 
+@app.route('/deletepokebattle/<int:id>')
+def deletepokebattle(id):
+  # delete selected pokebattle
+  query = "DELETE FROM `Pokemons_Battles` WHERE `pokebattle_id` = %s;"
+  cur = mysql.connection.cursor()
+  cur.execute(query, (id,))
+  mysql.connection.commit()
+  return redirect("/pokebattles")
+
 @app.route('/trainers')
 def trainers():
   # get all trainers from the database
