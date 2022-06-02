@@ -214,9 +214,34 @@ def pokebattles():
 
   return render_template('pokebattles.j2', pokebattles=db_pokebattles)
 
-@app.route('/addpokebattle')
-def addpokebattle():
-  return render_template('forms/addpokebattle.j2')
+@app.route('/addpokebattle/<int:id>', methods=["POST", "GET"])
+def addpokebattle(id):
+  # display the form with prepopulated data
+  if request.method == "GET":
+    # get the target pokemon
+    query = """
+      SELECT `pokemon_id`, `nickname`, Species.species AS `species`, Trainers.name AS trainer, Pokemons.trainer_id AS `trainer_id`
+      FROM `Pokemons` 
+      LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
+      INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
+      WHERE `pokemon_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    db_pokemon = cur.fetchone()
+
+    # get the battles for particular trainer
+    query = """
+      SELECT `battle_id`, `date`, Stadiums.name AS `stadium`
+      FROM `Battles`
+      INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
+      WHERE `winning_trainer` = %s OR `losing_trainer` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (db_pokemon['trainer_id'], db_pokemon['trainer_id'],))
+    db_battles = cur.fetchall()
+
+    return render_template('forms/addpokebattle.j2', pokemon=db_pokemon, battles=db_battles)
 
 @app.route('/updatepokebattle')
 def updatepokebattle():

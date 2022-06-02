@@ -2,34 +2,35 @@
 
 {% block content %}
   <h2>Add New Pokemon Battle Participation</h2>
-  <form>
+  <form method="post">
     <div class="form-group row">
       <label for="nickname" class="col-sm-2 col-form-label">Nickname</label>
       <div class="col-sm-10">
-        <input type="text" readonly class="form-control-plaintext" id="nickname" value="Zaps">
+        <input type="text" readonly class="form-control-plaintext" id="nickname" name="nickname" value={{pokemon['nickname']}}>
       </div>
     </div>
     <div class="form-group row">
       <label for="pokemon" class="col-sm-2 col-form-label">Pokemon</label>
       <div class="col-sm-10">
-        <input type="text" readonly class="form-control-plaintext" id="pokemon" value="Pikachu">
+        <input type="text" readonly class="form-control-plaintext" id="pokemon" value={{pokemon['species']}}>
       </div>
     </div>
     <div class="form-group row">
       <label for="trainer" class="col-sm-2 col-form-label">Trainer</label>
       <div class="col-sm-10">
-        <input type="text" readonly class="form-control-plaintext" id="trainer" value="Ash Ketchum">
+        <input type="text" readonly class="form-control-plaintext" id="trainer" value="{{pokemon['trainer']}}">
       </div>
     </div>
     <div class="form-group">
       <label for="battle">Battle</label>
-        <select id="winner" class="form-select">
-          <option value="1">2022-02-01 Cerulean Gym</option>
-          <option value="2">2022-03-16 Pewter Gym</option>
+        <select id="battle" name="battle" class="form-select">
+          {% for battle in battles %}
+            <option value="{{battle.battle_id}}">{{ battle.date }} {{ battle.stadium }}</option>
+          {% endfor %}
         </select>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="" id="knocked-out">
+      <input class="form-check-input" type="checkbox" value="" id="knocked-out" name="knocked-out">
       <label class="form-check-label" for="knocked-out">
         Knocked Out?
       </label>
