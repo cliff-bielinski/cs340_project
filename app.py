@@ -245,7 +245,27 @@ def addpokebattle(id):
   
   # send form data with new pokebattle entry
   if request.method == "POST":
-    pass
+    input_battle_id = request.form["battle"]
+    input_ko = request.form["knocked-out"]
+    print(input_ko)
+
+    query = """
+      INSERT INTO `Pokemons_Battles` (
+        `battle_id`,
+        `pokemon_id`,
+        `knocked_out`
+      )
+      VALUES (
+        (SELECT `battle_id` FROM `Battles` WHERE `battle_id` = %s),
+        (SELECT `pokemon_id` FROM `Pokemons` WHERE `pokemon_id` = %s),
+        %s
+      );
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_battle_id, id, input_ko))
+    mysql.connection.commit()
+
+    return redirect('/pokebattles')
 
 @app.route('/updatepokebattle')
 def updatepokebattle():
