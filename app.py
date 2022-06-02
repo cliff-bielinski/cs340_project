@@ -242,6 +242,10 @@ def addpokebattle(id):
     db_battles = cur.fetchall()
 
     return render_template('forms/addpokebattle.j2', pokemon=db_pokemon, battles=db_battles)
+  
+  # send form data with new pokebattle entry
+  if request.method == "POST":
+    pass
 
 @app.route('/updatepokebattle')
 def updatepokebattle():
