@@ -190,7 +190,29 @@ def deletepokemon(id):
 
 @app.route('/pokebattles')
 def pokebattles():
-  return render_template('pokebattles.j2', pokebattles=tests.sample_data.pokemon_battles)
+  # get all pokebattles from the db and display them
+  query = """
+    SELECT 
+      `pokebattle_id`,
+      Battles.date AS `date`, 
+      Stadiums.name AS `stadium`,
+      Pokemons.nickname AS 'nickname',
+      Species.species AS `species`,
+      Trainers.name AS `trainer`,
+      (Trainers.trainer_id = Battles.winning_trainer) AS `winner`,
+      `knocked_out`
+    FROM `Pokemons_Battles`
+    INNER JOIN `Battles` ON Battles.battle_id = Pokemons_Battles.battle_id
+    INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
+    INNER JOIN `Pokemons` ON Pokemons.pokemon_id = Pokemons_Battles.pokemon_id
+    INNER JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
+    INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id;
+  """
+  cur = mysql.connection.cursor()
+  cur.execute(query)
+  db_pokebattles = cur.fetchall()
+
+  return render_template('pokebattles.j2', pokebattles=db_pokebattles)
 
 @app.route('/addpokebattle')
 def addpokebattle():

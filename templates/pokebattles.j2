@@ -11,7 +11,7 @@
         <th scope="col">Nickname</th>
         <th scope="col">Species</th>
         <th scope="col">Trainer</th>
-        <th scope="col">Winner</th>
+        <th scope="col">Winner?</th>
         <th scope="col">Knocked Out?</th>
         <th scope="col">Update</th>
         <th scope="col">Delete</th>
@@ -26,8 +26,16 @@
         <td>{{ pokebattle['nickname'] }}</td>
         <td>{{ pokebattle['species'] }}</td>
         <td>{{ pokebattle['trainer'] }}</td>
-        <td>{{ pokebattle['winner'] }}</td>
-        <td>{{ pokebattle['knocked_out'] }}</td>
+        {% if pokebattle['winner'] == 1 %}
+          <td>Yes</td>
+        {% else %}
+          <td>No</td>
+        {% endif %}
+        {% if pokebattle['knocked_out'] == 1 %}
+          <td>Yes</td>
+        {% else %}
+          <td>No</td>
+        {% endif %}
         <td>
           <a class="navbar-brand" href="{{ url_for('updatepokebattle') }}">
             <img src="/static/img/pokeball.png" alt="update" width="40" height="40">
