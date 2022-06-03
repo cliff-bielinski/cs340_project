@@ -26,11 +26,12 @@ WHERE `pokedex_id` = :pokedex_id_from_browser;
 
 -- insert a new Species for the Add Species Form
 INSERT INTO `Species` (
+  `pokedex_id`,
   `species`,
   `type`,
   `secondary_type`
 )
-VALUES (:species_input, :type_input, :secondary_type_input)
+VALUES (:pokedex_id_input, :species_input, :type_input, :secondary_type_input)
 
 -- delete a Species in Current Species
 DELETE FROM `Species` WHERE `pokedex_id` = :pokedex_id_from_browser;
@@ -93,7 +94,8 @@ DELETE FROM `Trainers` WHERE `trainer_id` = :trainer_id_from_browser;
 SELECT `pokemon_id`, `nickname`, Pokemons.gender, `level`, Species.species, Trainers.name AS trainer
 FROM `Pokemons` 
 INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
-LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id;
+LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
+ORDER BY `pokemon_id`;
 
 -- get a single Pokemon's data for the Update Pokemon Form
 SELECT `pokemon_id`, `nickname`, Pokemons.gender, `level`, Species.species, Trainers.name AS trainer
@@ -139,7 +141,8 @@ SELECT `battle_id`, `date`, Stadiums.name AS `location`, winner.name AS `winner`
 FROM `Battles` 
 INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
 INNER JOIN `Trainers` winner ON winner.trainer_id = Battles.winning_trainer
-INNER JOIN `Trainers` loser ON loser.trainer_id = Battles.losing_trainer;
+INNER JOIN `Trainers` loser ON loser.trainer_id = Battles.losing_trainer
+ORDER BY `battle_id`;
 
 -- get a single Battle's data for the Update Battle Form
 SELECT `battle_id`, `date`, Stadiums.name AS `location`, winner.name AS `winner`, loser.name AS `loser`
@@ -199,10 +202,12 @@ INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id;
 SELECT 
   `pokebattle_id`,
   Battles.date AS `date`, 
+  Pokemons_Battles.battle_id AS `battle_id`,
   Stadiums.name AS `stadium`,
   Pokemons.nickname AS 'nickname',
   Species.species AS `species`,
   Trainers.name AS `trainer`,
+  Trainers.trainer_id AS `trainer_id`,
   `knocked_out`
 FROM `Pokemons_Battles`
 INNER JOIN `Battles` ON Battles.battle_id = Pokemons_Battles.battle_id
@@ -232,5 +237,18 @@ VALUES (
   :knocked_out_input
 );
 
+-- get pre-populated Pokemon attributes for adding new Pokemon Battle Participation
+SELECT `pokemon_id`, `nickname`, Species.species AS `species`, Trainers.name AS trainer, Pokemons.trainer_id AS `trainer_id`
+FROM `Pokemons` 
+LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
+INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
+WHERE `pokemon_id` = :pokebattle_id_from_browser;
+
 -- delete a Pokemon Battle Participation
 DELETE FROM `Pokemons_Battles` WHERE `pokebattle_id` = :pokebattle_id_from_browser;
+
+-- get all battles to populate drop down menu for a particular trainer when adding/updating Pokemon Battle Participation
+SELECT `battle_id`, `date`, Stadiums.name AS `stadium`
+FROM `Battles`
+INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
+WHERE `winning_trainer` = :trainer_id_from_browser OR `losing_trainer` = trainer_id_from_browser;
