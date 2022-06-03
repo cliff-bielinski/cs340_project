@@ -48,31 +48,61 @@
   </table>
 
   <br>
-  <h5>Search for a Pokemon</h5>
-  <form action="#" method="get">
+  <h5>Search for Pokemon</h5>
+  <form method="get">
     <div class="search-form">
       <label for="nickname">Nickname (optional)</label>
-      <input type="text" class="form-control" id="nickname">
+      <input type="text" name="nickname" class="form-control">
 
       <label for="species">Species</label>
-      <select id="species" class="form-select">
+      <select id="species" name="species" class="form-select">
         {% for species in all_species %}
           <option value="{{species.species}}">{{ species.species }}</option>
         {% endfor %}
       </select>
 
-      <label for="trainer">Trainer (optional)</label>
-      <select id="trainer" class="form-select">
-        <option value="None"></option>
+      <label for="trainer">Trainer</label>
+      <select id="trainer" name="trainer" class="form-select">
+        <option value="None">None</option>
         {% for trainer in trainers %}
           <option value="{{trainer.name}}">{{ trainer.name }}</option>
         {% endfor %}
       </select>
 
       <label for="level" class="form-label">Level (optional)</label>
-      <input type="number" min="0" class="form-control" id="level">
+      <input type="number" min="0" id="level" name="level" class="form-control">
     </div>
     <button type="submit" class="btn btn-primary">Search</button>
   </form>
+
+  <div>
+    {{ search_result }}
+  </div>
+
+  <h2>Found Pokemon</h2>
+  <table class="table table-dark table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Pokemon #</th>
+        <th scope="col">Nickname</th>
+        <th scope="col">Gender</th>
+        <th scope="col">Level</th>
+        <th scope="col">Species</th>
+        <th scope="col">Trainer</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pokemon in found_pokemon %}
+      <tr>
+        <th scope="row">{{ pokemon['pokemon_id'] }}</th>
+        <td>{{ pokemon['nickname'] }}</td>
+        <td>{{ pokemon['gender'] }}</td>
+        <td>{{ pokemon['level'] }}</td>
+        <td>{{ pokemon['species'] }}</td>
+        <td>{{ pokemon['name'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
 {% endblock %}

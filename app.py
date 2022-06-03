@@ -24,6 +24,7 @@ def index():
 
 @app.route('/pokemon')
 def pokemon():
+
   query = """
     SELECT `pokemon_id`, `nickname`, Pokemons.gender, `level`, Species.species, Trainers.name AS trainer
     FROM `Pokemons` 
@@ -36,21 +37,61 @@ def pokemon():
   db_pokemons = cur.fetchall()
 
   query = "SELECT * FROM Species;"
-  cur = mysql.connection.cursor()
   cur.execute(query)
   db_species = cur.fetchall()
   
+
   query = "SELECT * FROM Trainers;"
-  cur = mysql.connection.cursor()
   cur.execute(query)
   db_trainers = cur.fetchall()
 
+  # search
+  found_pokemon = ""
+  search_query = request.args
+  if search_query:
+    search_nickname = search_query["nickname"]
+    search_species = search_query["species"]
+    search_trainer = search_query["trainer"]
+    search_level = search_query["level"]
+
+    where_clause =''
+    arguments = []  # arguments = (search_nickname, search_species, search_trainer, search_level)
+    if search_nickname:
+      where_clause += 'nickname = %s and '
+      arguments.append(search_nickname)
+
+    where_clause += 'species = %s'
+    arguments.append(search_species)
+    
+    if search_trainer != "None":
+      where_clause += ' and Trainers.name = %s'
+      arguments.append(search_trainer)
+    else:
+      where_clause += ' and Trainers.name IS NULL'
+
+    if search_level:
+      where_clause += ' and level = %s'
+      arguments.append(search_level)
+
+    query = """
+      SELECT * FROM `Pokemons` 
+      INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
+      LEFT JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
+      WHERE {where_clause};
+    """
+    query = query.format(where_clause=where_clause)
+    cur.execute(query, arguments)
+    found_pokemon = cur.fetchall()
+    print("-- ", found_pokemon)
+  
+  cur.close()
   return render_template(
     'pokemon.j2',
     all_pokemon=db_pokemons,
     all_species=db_species,
-    trainers=db_trainers
-    )
+    trainers=db_trainers,
+    found_pokemon=found_pokemon
+  )
 
 
 @app.route('/addpokemon', methods=["POST", "GET"])
@@ -90,6 +131,7 @@ def addpokemon():
     cur.execute(query, (input_nickname, input_gender, input_level, input_species, input_trainer))
     mysql.connection.commit()
 
+    cur.close()
     return redirect('/pokemon')
 
   # get species and trainers for form
@@ -97,12 +139,13 @@ def addpokemon():
   cur = mysql.connection.cursor()
   cur.execute(query)
   db_species = cur.fetchall()
+
   query = "SELECT * FROM Trainers;"
-  cur = mysql.connection.cursor()
   cur.execute(query)
   db_trainers = cur.fetchall()
 
   # to display the form
+  cur.close()
   return render_template(
     'forms/addpokemon.j2',
     all_species=db_species,
@@ -130,14 +173,14 @@ def updatepokemon(id):
 
     # get all species and trainer
     query = "SELECT * FROM Species;"
-    cur = mysql.connection.cursor()
     cur.execute(query)
     db_species = cur.fetchall()
+
     query = "SELECT * FROM Trainers;"
-    cur = mysql.connection.cursor()
     cur.execute(query)
     db_trainers = cur.fetchall()
 
+    cur.close()
     return render_template(
       'forms/updatepokemon.j2',
       pokemon = db_pokemon,
@@ -174,6 +217,7 @@ def updatepokemon(id):
     cur.execute(query, (input_nickname, input_gender, input_level, input_species, input_trainer, id))
     mysql.connection.commit()
 
+    cur.close()
     return redirect('/pokemon')  
 
 
@@ -211,7 +255,7 @@ def pokebattles():
   cur = mysql.connection.cursor()
   cur.execute(query)
   db_pokebattles = cur.fetchall()
-
+  cur.close()
   return render_template('pokebattles.j2', pokebattles=db_pokebattles)
 
 @app.route('/addpokebattle/<int:id>', methods=["POST", "GET"])
@@ -237,10 +281,10 @@ def addpokebattle(id):
       INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
       WHERE `winning_trainer` = %s OR `losing_trainer` = %s;
     """
-    cur = mysql.connection.cursor()
+    
     cur.execute(query, (db_pokemon['trainer_id'], db_pokemon['trainer_id'],))
     db_battles = cur.fetchall()
-
+    cur.close()
     return render_template('forms/addpokebattle.j2', pokemon=db_pokemon, battles=db_battles)
   
   # send form data with new pokebattle entry
@@ -263,7 +307,7 @@ def addpokebattle(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (input_battle_id, id, input_ko))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/pokebattles')
 
 @app.route('/updatepokebattle/<int:id>', methods=["POST", "GET"])
@@ -301,10 +345,10 @@ def updatepokebattle(id):
       INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
       WHERE `winning_trainer` = %s OR `losing_trainer` = %s;
     """
-    cur = mysql.connection.cursor()
+    
     cur.execute(query, (db_pokebattle['trainer_id'], db_pokebattle['trainer_id'],))
     db_battles = cur.fetchall()
-
+    cur.close()
     return render_template('forms/updatepokebattle.j2', pokebattle=db_pokebattle, battles=db_battles)
   
   # send form data with new pokebattle entry
@@ -322,7 +366,7 @@ def updatepokebattle(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (input_battle_id, input_ko, id))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/pokebattles')
 
 @app.route('/deletepokebattle/<int:id>')
@@ -332,6 +376,7 @@ def deletepokebattle(id):
   cur = mysql.connection.cursor()
   cur.execute(query, (id,))
   mysql.connection.commit()
+  cur.close()
   return redirect("/pokebattles")
 
 @app.route('/trainers')
@@ -343,6 +388,7 @@ def trainers():
   cur = mysql.connection.cursor()
   cur.execute(query)
   db_trainers = cur.fetchall()
+  cur.close()
   return render_template('trainers.j2', trainers=db_trainers)
 
 @app.route('/addtrainer', methods=["POST", "GET"])
@@ -364,7 +410,7 @@ def addtrainer():
     cur = mysql.connection.cursor()
     cur.execute(query, (input_name, input_birthday, input_gender))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/trainers')
 
   return render_template('forms/addtrainer.j2')
@@ -380,7 +426,7 @@ def updatetrainer(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     db_trainer = cur.fetchone()
-    
+    cur.close()
     return render_template('forms/updatetrainer.j2', trainer=db_trainer)
 
   if request.method == "POST":
@@ -396,7 +442,7 @@ def updatetrainer(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (input_name, input_birthday, input_gender, id))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/trainers')
 
 @app.route("/deletetrainer/<int:id>")
@@ -406,6 +452,7 @@ def deletetrainer(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
+    cur.close()
     return redirect("/trainers")
 
 @app.route('/battles')
@@ -422,7 +469,7 @@ def battles():
   cur = mysql.connection.cursor()
   cur.execute(query)
   db_battles = cur.fetchall()
-
+  cur.close()
   return render_template('battles.j2', battles=db_battles)
 
 @app.route('/addbattle', methods=["POST", "GET"])
@@ -451,6 +498,7 @@ def addbattle():
     cur = mysql.connection.cursor()
     cur.execute(query, (input_date, input_location, input_winner, input_loser))
     mysql.connection.commit()
+    cur.close()
     return redirect('/battles')
 
   # get trainers and stadiums for population of add battle form
@@ -459,10 +507,10 @@ def addbattle():
   cur.execute(query)
   db_trainers = cur.fetchall()
   query = "SELECT * FROM Stadiums;"
-  cur = mysql.connection.cursor()
+  
   cur.execute(query)
   db_stadiums = cur.fetchall()
-
+  cur.close()
   return render_template(
     'forms/addbattle.j2', 
     locations=db_stadiums,
@@ -487,14 +535,12 @@ def updatebattle(id):
 
     # get trainers and stadiums for population of add battle form
     query = "SELECT * FROM Trainers;"
-    cur = mysql.connection.cursor()
     cur.execute(query)
     db_trainers = cur.fetchall()
     query = "SELECT * FROM Stadiums;"
-    cur = mysql.connection.cursor()
     cur.execute(query)
     db_stadiums = cur.fetchall()
-
+    cur.close()
     return render_template(
       'forms/updatebattle.j2', 
       battle=db_battle,
@@ -522,7 +568,7 @@ def updatebattle(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (input_date, input_location, input_winner, input_loser, id))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/battles')  
 
 @app.route("/deletebattle/<int:id>")
@@ -532,6 +578,7 @@ def deletebattle(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
+    cur.close()
     return redirect("/battles")
 
 @app.route('/species')
@@ -544,7 +591,7 @@ def species():
   cur = mysql.connection.cursor()
   cur.execute(query)
   db_species = cur.fetchall()
-
+  cur.close()
   return render_template('species.j2', all_species=db_species)
 
 @app.route('/addspecies', methods=["POST", "GET"])
@@ -571,7 +618,7 @@ def addspecies():
     cur = mysql.connection.cursor()
     cur.execute(query, (input_id, input_species, input_type, input_sec_type))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/species')
 
   if request.method == "GET":
@@ -582,6 +629,8 @@ def addspecies():
     cur = mysql.connection.cursor()
     cur.execute(query)
     db_pokedex = cur.fetchall()
+    cur.close()
+
     taken_pokedex = []
     for i in db_pokedex:
       taken_pokedex.append(i["pokedex_id"])
@@ -603,7 +652,7 @@ def updatespecies(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     db_species = cur.fetchone()
-
+    cur.close()
     return render_template(
       'forms/updatespecies.j2', 
       types=tests.sample_data.types,
@@ -626,7 +675,7 @@ def updatespecies(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (input_species, input_type, input_sec_type, id))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/species')
 
 @app.route("/deletespecies/<int:id>")
@@ -636,7 +685,7 @@ def deletespecies(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
-
+    cur.close()
     return redirect("/species")
 
 @app.route('/stadiums')
@@ -648,7 +697,7 @@ def stadiums():
   cur = mysql.connection.cursor()
   cur.execute(query)
   db_stadiums = cur.fetchall()
-
+  cur.close()
   return render_template('stadiums.j2', stadiums=db_stadiums)
 
 @app.route('/addstadium', methods=["POST", "GET"])
@@ -668,7 +717,7 @@ def addstadium():
     cur = mysql.connection.cursor()
     cur.execute(query, (input_name, input_location))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/stadiums')
 
   return render_template('forms/addstadium.j2')
@@ -684,6 +733,7 @@ def updatestadium(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     db_stadiums = cur.fetchone()
+    cur.close()
     return render_template('forms/updatestadium.j2', stadiums=db_stadiums)
   
   if request.method == "POST":
@@ -699,7 +749,7 @@ def updatestadium(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (input_name, input_location, id))
     mysql.connection.commit()
-
+    cur.close()
     return redirect('/stadiums')
 
 @app.route("/deletestadium/<int:id>")
@@ -709,7 +759,7 @@ def deletestadium(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
-
+    cur.close()
     return redirect("/stadiums")
 
 # Error Handling for MySQL DB errors
