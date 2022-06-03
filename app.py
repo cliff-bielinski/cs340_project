@@ -247,7 +247,6 @@ def addpokebattle(id):
   if request.method == "POST":
     input_battle_id = request.form["battle"]
     input_ko = request.form["knocked-out"]
-    print(input_ko)
 
     query = """
       INSERT INTO `Pokemons_Battles` (
@@ -267,9 +266,64 @@ def addpokebattle(id):
 
     return redirect('/pokebattles')
 
-@app.route('/updatepokebattle')
-def updatepokebattle():
-  return render_template('forms/updatepokebattle.j2')
+@app.route('/updatepokebattle/<int:id>', methods=["POST", "GET"])
+def updatepokebattle(id):
+  # display the form with prepopulated data
+  if request.method == "GET":
+    # get the target pokemon
+    query = """
+      SELECT 
+        `pokebattle_id`,
+        Battles.date AS `date`, 
+        Pokemons_Battles.battle_id AS `battle_id`,
+        Stadiums.name AS `stadium`,
+        Pokemons.nickname AS 'nickname',
+        Species.species AS `species`,
+        Trainers.name AS `trainer`,
+        Trainers.trainer_id AS `trainer_id`,
+        `knocked_out`
+      FROM `Pokemons_Battles`
+      INNER JOIN `Battles` ON Battles.battle_id = Pokemons_Battles.battle_id
+      INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
+      INNER JOIN `Pokemons` ON Pokemons.pokemon_id = Pokemons_Battles.pokemon_id
+      INNER JOIN `Trainers` ON Trainers.trainer_id = Pokemons.trainer_id
+      INNER JOIN `Species` ON Species.pokedex_id = Pokemons.pokedex_id
+      WHERE `pokebattle_id` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    db_pokebattle = cur.fetchone()
+
+    # get the battles for particular trainer
+    query = """
+      SELECT `battle_id`, `date`, Stadiums.name AS `stadium`
+      FROM `Battles`
+      INNER JOIN `Stadiums` ON Stadiums.stadium_id = Battles.stadium_id
+      WHERE `winning_trainer` = %s OR `losing_trainer` = %s;
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (db_pokebattle['trainer_id'], db_pokebattle['trainer_id'],))
+    db_battles = cur.fetchall()
+
+    return render_template('forms/updatepokebattle.j2', pokebattle=db_pokebattle, battles=db_battles)
+  
+  # send form data with new pokebattle entry
+  if request.method == "POST":
+    input_battle_id = request.form["battle"]
+    input_ko = request.form["knocked-out"]
+
+    query = """
+      UPDATE `Pokemons_Battles`
+      SET
+        `battle_id` = (SELECT `battle_id` FROM `Battles` WHERE `battle_id` = %s),
+        `knocked_out` = %s
+      WHERE `pokebattle_id` = %s; 
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query, (input_battle_id, input_ko, id))
+    mysql.connection.commit()
+
+    return redirect('/pokebattles')
 
 @app.route('/deletepokebattle/<int:id>')
 def deletepokebattle(id):
