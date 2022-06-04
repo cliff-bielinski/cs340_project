@@ -5,15 +5,15 @@
   <form action="/updatepokebattle/{{pokebattle['pokebattle_id']}}" method="post">
     <div class="form-group">
       <label for="nickname">Nickname</label>
-      <input type="text" readonly class="form-control" id="nickname" name="nickname" value={{pokebattle['nickname']}}>
+      <input type="text" readonly class="form-control greyout" id="nickname" name="nickname" value={{pokebattle['nickname']}}>
     </div>
     <div class="form-group">
       <label for="pokemon">Pokemon</label>
-      <input type="text" readonly class="form-control" id="pokemon" name="pokemon" value="{{pokebattle['species']}}">
+      <input type="text" readonly class="form-control greyout" id="pokemon" name="pokemon" value="{{pokebattle['species']}}">
     </div>
     <div class="form-group">
       <label for="trainer">Trainer</label>
-      <input type="text" readonly class="form-control" id="trainer" name="trainer" value="{{pokebattle['trainer']}}">
+      <input type="text" readonly class="form-control greyout" id="trainer" name="trainer" value="{{pokebattle['trainer']}}">
     </div>
     <div class="form-group">
       <label for="battle">Battle</label>

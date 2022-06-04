@@ -20,3 +20,7 @@
 .search-form input, .search-form select {
     margin-right: 4%;
 }
+
+.greyout {
+    color: grey;
+}

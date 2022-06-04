@@ -5,15 +5,15 @@
   <form method="post">
     <div class="form-group">
       <label for="nickname" class="col-sm-2 col-form-label">Nickname</label>
-      <input type="text" readonly class="form-control" id="nickname" name="nickname" value={{pokemon['nickname']}}>
+      <input type="text" readonly class="form-control greyout" id="nickname" name="nickname" value={{pokemon['nickname']}}>
     </div>
     <div class="form-group">
       <label for="pokemon" class="col-sm-2 col-form-label">Pokemon</label>
-      <input type="text" readonly class="form-control" id="pokemon" value={{pokemon['species']}}>
+      <input type="text" readonly class="form-control greyout" id="pokemon" value={{pokemon['species']}}>
     </div>
     <div class="form-group">
       <label for="trainer" class="col-sm-2 col-form-label">Trainer</label>
-      <input type="text" readonly class="form-control" id="trainer" value="{{pokemon['trainer']}}">
+      <input type="text" readonly class="form-control greyout" id="trainer" value="{{pokemon['trainer']}}">
     </div>
     <div class="form-group">
       <label for="battle">Battle</label>
