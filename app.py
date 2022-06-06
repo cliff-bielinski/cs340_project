@@ -63,11 +63,13 @@ def pokemon():
 
   # get search parameters if they exist
   if search_query:
+    # get search parameters entered by user in form
     search_nickname = search_query["nickname"]
     search_species = search_query["species"]
     search_trainer = search_query["trainer"]
     search_level = search_query["level"]
 
+    # append search parameters to arguments if they exist to create SQL search query
     where_clause =''
     arguments = []  # arguments = (search_nickname, search_species, search_trainer, search_level)
     if search_nickname:
